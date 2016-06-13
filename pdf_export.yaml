@@ -1,0 +1,7 @@
+name    : pdf_export
+author  : Stephen Suess
+version : 1.0
+desc    : Enable export of detail view info to PDF
+config_url: /plugins/pdf_export/pages/setup.php
+default_priority: 999
+category: Export

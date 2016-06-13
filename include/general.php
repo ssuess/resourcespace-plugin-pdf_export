@@ -190,6 +190,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			unset($notes);
 			//if ($resources[$n]['annotation_count']!=0){
 				$thisrefarray = get_resource_field_data($ref,false);
+				$resultmerge = $thisrefarray;
 				if ($pdf_export_whereabouts_integration) {
 				$checkwherabouts = sql_query("SHOW TABLES LIKE 'whereabouts'");
 				$whereabouts = '';

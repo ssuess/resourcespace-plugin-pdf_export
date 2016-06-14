@@ -3,6 +3,7 @@
 
 ## Installation
 Download the whole diretory and rename to "pdf_export". Then you can install it one of two ways:
+
 1. Upload as rsp file
 	* tar.gz it and change the extenstion to ".rsp"
 	* upload the rsp file from the plugin config screen in ResourceSpace admin

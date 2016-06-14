@@ -35,7 +35,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_exclude,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once($storagedir.'/../include/search_functions.php');
@@ -123,7 +123,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdf->setPrintHeader(false);
 	$pdf->setPrintFooter(false);
 	$pdf->setMargins(.5,.5,.5);
-	$excludearr=explode(",",$pdf_export_fields_exclude);
+	$includearr=explode(",",$pdf_export_fields_include);
 	
 	$page=1;
 	$totalpages=1;
@@ -170,7 +170,9 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$logoextension = image_type_to_extension($logosizes[2]);
 			$logowidth = ($logosizes[0]/139.5);
 			$logoheight = ($logosizes[1]/139.5);
-			$pdf->Image($logourl,.5,.30,$logowidth,$logoheight,$logoext);	
+			$pdf->Image($logourl,.5,.30,$logowidth,$logoheight,$logoext);
+			// testing for getting title to wrap if long	
+			//$pdf->MultiCell(55, .9, strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])), 0, 'L', 0, 0, '', '', true);
 			$pdf->Text(.5,.8,strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			if ($pdf_export_ttf_list_font_path) {
 			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path, 'TrueTypeUnicode', '', 32);
@@ -189,44 +191,33 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$ypos=$imageheight+1.6;$pdf->SetY($ypos);
 			unset($notes);
 			//if ($resources[$n]['annotation_count']!=0){
-				$thisrefarray = get_resource_field_data($ref,false);
-				$resultmerge = $thisrefarray;
 				if ($pdf_export_whereabouts_integration) {
 				$checkwherabouts = sql_query("SHOW TABLES LIKE 'whereabouts'");
-				$whereabouts = '';
 				if ($checkwherabouts) {
 				$whereabouts=sql_query("select mylocation AS value,'-9999999' AS ref, 'Current Location' AS title from whereabouts where ref='$ref' ORDER by date_movement DESC LIMIT 1");
 				}
-				if ($whereabouts) {
-				$resultmerge = array_merge($thisrefarray, $whereabouts);
-				}} else {
-				$resultmerge = $thisrefarray;
+				} else {
+				$whereabouts = false;
 				}
 				$notepages=1; // Normally notes will all fit on one page, but may not
-				//if ($whereabouts) {
-				//	$pdf->MultiRow($whereabouts[0]['title'],ltrim(trim($whereabouts[0]['value']),','));
-					//}
-				foreach ($resultmerge as $note)
-					{
-					if ($note['value'] && $note['value']!=',') {
+				
+				foreach ($includearr as $include) {
+					$fieldsf = get_field($include);
 					// If the notes took us to a new page, return to the image page before marking annotation
 					if($notepages>1){$pdf->setPage($currentpdfpage);}
-					
-					
-					$pdf->SetLineStyle($style1);
-					//$pdf->Rect(((($width-1)/2)-($imagewidth-1)/2)+$note_x,$note_y+1.5,$note_width,$note_height);
-					//$pdf->Rect(((($width-1)/2)-($imagewidth-1)/2)+$note_x,$note_y+1.5,.1,.1,'DF',$style1,array(255,255,0));					
+										
 					$ypos=$pdf->GetY();			
-					//$pdf->Text(((($width-1)/2)-($imagewidth-1)/2)+$note_x-.01,$note_y+1.49,$m,false,false,true,0,0,'L');
-					
-					//$pdf->SetLineStyle($style2);
-					//$pdf->Rect(((($width-1)/2)-($imagewidth-1)/2)+$note_x,$note_y+1,$note_width,$note_height);					
+										
 					$pdf->SetY($ypos);
 					$pdf->SetLineStyle($style);
 					// If the notes went over the page, we  went back to image for annotation, so we need to return to the page with the last row of the table before adding next row
 					if($notepages>1){$pdf->setPage($currentpdfpage+($notepages-1));}
-					if(!in_array($note['ref'],$excludearr)){
-					$pdf->MultiRow(i18n_get_translated($note['title']),ltrim(trim(i18n_get_translated($note['value'])),','));
+					if (($whereabouts)&&($include =='w')) {
+					$pdf->MultiRow($whereabouts[0]['title'],ltrim(trim($whereabouts[0]['value']),','));
+					} else {
+					if (get_data_by_field ($ref, $include) && get_data_by_field ($ref, $include)!=',') {
+					$pdf->MultiRow(i18n_get_translated($fieldsf["title"]),ltrim(trim(i18n_get_translated(get_data_by_field ($ref, $include))),','));
+					}
 					}
 					// Check if this new table row has moved us to a new page, in which case we need to record this and go back to image page before the next annotation
 					if(isset($notepos)){$lastnotepos=$notepos;}
@@ -235,9 +226,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 					$ypos=$ypos+.5;$m++;				
 					
 					}
-					}
 						
-				//}
 			}
 		// Check if there is another page?
 		if (file_exists(get_resource_path($ref,true,"scr",false,"jpg",-1,$page+1,$use_watermark,""))) {unset($notepos);unset($lastnotepos);$totalpages++;}

@@ -113,6 +113,8 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	if ($pdf_export_ttf_header_font_path) {	
 	$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_header_font_path, 'TrueTypeUnicode', '', 32);
 	$pdf->SetFont($ttf_header_font, '', 15);
+	} else {
+	$pdf->SetFont('helvetica', 'B', 15,'',false);
 	}
 	// set document information
 	$pdf->SetCreator(PDF_CREATOR);
@@ -170,17 +172,22 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$logoextension = image_type_to_extension($logosizes[2]);
 			$logowidth = ($logosizes[0]/139.5);
 			$logoheight = ($logosizes[1]/139.5);
-			$pdf->Image($logourl,.5,.30,$logowidth,$logoheight,$logoext);
+			$pdf->Image($logourl,.5,.3,$logowidth,$logoheight,$logoext);
 			// testing for getting title to wrap if long	
 			//$pdf->MultiCell(55, .9, strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])), 0, 'L', 0, 0, '', '', true);
-			$pdf->Text(.5,.8,strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
+			$righttitle=str_replace("<br />","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
+			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1, .5 ,.8, true, 0);
+			//$pdf->Text(.5,.8,strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			if ($pdf_export_ttf_list_font_path) {
 			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path, 'TrueTypeUnicode', '', 32);
 			$pdf->SetFont($ttf_list_font, '', 10);
+			}  else {
+			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
-			$pdf->Text(.5,1.1,$date);
-			//$pdf->Image($imgpath,((($width-1)/2)-($imagewidth-1)/2),1.5,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
-			$pdf->Image($imgpath,.5,1.4,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
+			//$pdf->Text(.5,1.4,$date);
+			//$pdf->Image($imgpath,((($width-1)/2)-($imagewidth-1)/2),1.5,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);
+			$titleheight = $pdf->getStringHeight(0,$righttitle);	
+			$pdf->Image($imgpath,.5,($titleheight*1.9)+1.1,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 	
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
@@ -188,7 +195,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$style= array('width' => 0.01, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(192,192,192));
 			$style1 = array('width' => 0.04, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(255, 255, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
-			$ypos=$imageheight+1.6;$pdf->SetY($ypos);
+			$ypos=$imageheight+($titleheight*1.9)+1.5;$pdf->SetY($ypos);
 			unset($notes);
 			//if ($resources[$n]['annotation_count']!=0){
 				if ($pdf_export_whereabouts_integration) {

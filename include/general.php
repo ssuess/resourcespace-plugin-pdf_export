@@ -175,7 +175,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$logoheight = ($logosizes[1]/139.5);
 			$pdf->Image($logourl,.5,.3,$logowidth,$logoheight,$logoext);
 			$righttitle=str_replace("<br />","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
-			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1, .5 ,.8, true, 0);
+			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.44,.8, true, 0);
 			if ($pdf_export_ttf_list_font_path) {
 			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path, 'TrueTypeUnicode', '', 32);
 			$pdf->SetFont($ttf_list_font, '', 10);

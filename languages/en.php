@@ -12,7 +12,7 @@ $lang["pdf_export_logo_url"]="PDF header image (URL)";
 $lang["pdf_export_fields_include"]="Fields to include from the export<br />(use ref IDs of <a href='/pages/admin/admin_resource_type_fields.php'>metadata fields</a>, comma separated and in order you want them to appear)<br /><br />";
 $lang["pdf_export_ttf_header_font_path"]="Header font conversion from ttf (filepath)<br />(relative to webroot)<br /><br />";
 $lang["pdf_export_ttf_list_font_path"]="List font conversion from ttf (filepath)<br />(relative to webroot)<br /><br />";
-$lang["pdf_export_imagesizeid"]="Image size to use<br />(use ref ID of <a href='pages/admin/admin_size_management.php'>preview size</a>)<br /><br />";
+$lang["pdf_export_imagesizeid"]="Image size to use<br />(use ref ID of <a href='/pages/admin/admin_size_management.php'>preview size</a>)<br /><br />";
 $lang['pdf_export_whereabouts_integration']="whereabouts plugin integration?<br/>(includes current whereabouts in list, use 'w' as include field ID in list above)<br /><br />";
 
 $lang["pdf_export_configuration"]="PDF Export Options";

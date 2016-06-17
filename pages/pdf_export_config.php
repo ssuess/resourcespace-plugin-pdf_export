@@ -173,6 +173,11 @@ function loadIt() {
 <?php } ?>
 
 <div class="Question">
+<label class="onetimenoteslabel"><?php echo $lang["onetimenotes"];?><br/><br/><?php echo $lang["onetimenotesdesc"];?></label><br /><br /><textarea name="onetimenotes" id="onetimenotes"></textarea>
+<div class="clearerleft"> </div>
+</div>
+
+<div class="Question">
 <label><?php echo $lang["size"]?></label>
 <select class="shrtwidth" name="size" id="size" onChange="jQuery().annotate('preview');	"><?php echo $papersize_select ?>
 </select>
@@ -193,8 +198,14 @@ function loadIt() {
 </div>
 </form><?php 
 //$thisrefarray = get_resource_field_data ($ref,false);
+//$fieldsf = get_field('73');
+//echo $fieldsf["title"];
+//echo get_data_by_field ($ref, '73');
+//$includearr=explode(",",$pdf_export_fields_include);
+
+//echo $fdata["value"];
 //echo "<pre>";
-//print_r($thisrefarray);
+//print_r($includearr);
 //echo "</pre>";
 ?>
 </div>

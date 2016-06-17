@@ -27,3 +27,12 @@
 	float:right;
 	padding-top:5px;
 }
+
+#onetimenotes {
+	width: 100%;
+	margin-top: 10px;
+}
+.onetimenoteslabel {
+	width: 100% !important;
+	
+}

@@ -11,6 +11,8 @@ $ref=getvalescaped("ref","");
 $size=getvalescaped("size","letter");
 $color=getvalescaped("color","yellow");
 $previewpage=getvalescaped("previewpage",1);
+$onetimenotes=getvalescaped("onetimenotes","");
+
 
 
 $cleartmp=getvalescaped("cleartmp",""); 

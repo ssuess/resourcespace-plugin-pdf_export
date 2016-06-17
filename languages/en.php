@@ -19,3 +19,5 @@ $lang["pdf_export_configuration"]="PDF Export Options";
 $lang["extensions_to_exclude"]="Extensions to exclude<br />(comma separated):";
 $lang["resource_types_to_exclude"]="Resource Types to exclude<br />(tick to exclude):";
 $lang["pdf_exportdebug"]="Debug:";
+$lang["onetimenotes"]="PDF notes";
+$lang["onetimenotesdesc"]="Enter notes that will show above other fields (only on this export, not saved)";

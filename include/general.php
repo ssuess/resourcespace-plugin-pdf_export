@@ -35,7 +35,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once($storagedir.'/../include/search_functions.php');
@@ -48,17 +48,18 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$jpgstoragepath=get_pdf_export_file_path($ref,true,"jpg");
 	$pdfhttppath=get_pdf_export_file_path($ref,false,"pdf");
 	$jpghttppath=get_pdf_export_file_path($ref,false,"jpg");
+	$onetimenotes=getvalescaped("onetimenotes","");
+
 	
 	class MYPDF extends TCPDF {
-		
+
 		public function MultiRow($left, $right) {
 			
 			$page_start = $this->getPage();
-			$y_start = $this->GetY();
-		
-		
-			// write the left cell
-			$this->MultiCell(1.5, 0, $left, 'T', 'L', 1, 2, '', '', true, 0);
+			$y_start = $this->GetY();			
+			
+			$borderstyle='T';
+			$this->MultiCell(1.5, 0, $left, $borderstyle, 'L', 1, 2, '', '', true, 0);
 		
 			$page_end_1 = $this->getPage();
 			$y_end_1 = $this->GetY();
@@ -67,7 +68,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 		
 			// write the right cell
 			$right=str_replace("<br />","\n",$right);
-			$this->MultiCell(0, 0, $right, 'T', 'L', 0, 1, $this->GetX() ,$y_start, true, 0);
+			$this->MultiCell(0, 0, $right, $borderstyle, 'L', 0, 1, $this->GetX() ,$y_start, true, 0);
 		
 			$page_end_2 = $this->getPage();
 			$y_end_2 = $this->GetY();
@@ -173,31 +174,26 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$logowidth = ($logosizes[0]/139.5);
 			$logoheight = ($logosizes[1]/139.5);
 			$pdf->Image($logourl,.5,.3,$logowidth,$logoheight,$logoext);
-			// testing for getting title to wrap if long	
-			//$pdf->MultiCell(55, .9, strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])), 0, 'L', 0, 0, '', '', true);
 			$righttitle=str_replace("<br />","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1, .5 ,.8, true, 0);
-			//$pdf->Text(.5,.8,strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			if ($pdf_export_ttf_list_font_path) {
 			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path, 'TrueTypeUnicode', '', 32);
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
-			//$pdf->Text(.5,1.4,$date);
 			//$pdf->Image($imgpath,((($width-1)/2)-($imagewidth-1)/2),1.5,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);
 			$titleheight = $pdf->getStringHeight(0,$righttitle);	
 			$pdf->Image($imgpath,.5,($titleheight*1.9)+1.1,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 	
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
-			$pdf->setCellPaddings(0.01, 0.01, 0.01, 0.1);
+			$pdf->setCellPaddings(0.01, 0.06, 0.01, 0.1);
 			$style= array('width' => 0.01, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(192,192,192));
-			$style1 = array('width' => 0.04, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(255, 255, 0));
+			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
 			$ypos=$imageheight+($titleheight*1.9)+1.5;$pdf->SetY($ypos);
 			unset($notes);
-			//if ($resources[$n]['annotation_count']!=0){
 				if ($pdf_export_whereabouts_integration) {
 				$checkwherabouts = sql_query("SHOW TABLES LIKE 'whereabouts'");
 				if ($checkwherabouts) {
@@ -207,7 +203,13 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 				$whereabouts = false;
 				}
 				$notepages=1; // Normally notes will all fit on one page, but may not
-				
+				if ($onetimenotes) {
+				$pdf->SetLineStyle($style1);
+				$pdf->MultiRow($lang["onetimenotes"],$onetimenotes);
+				$ypos=$pdf->GetY();									
+				$pdf->SetY($ypos);
+				$pdf->Line(.5,$ypos,$pdf->getPageWidth()-.5,$ypos);
+				}
 				foreach ($includearr as $include) {
 					$fieldsf = get_field($include);
 					// If the notes took us to a new page, return to the image page before marking annotation

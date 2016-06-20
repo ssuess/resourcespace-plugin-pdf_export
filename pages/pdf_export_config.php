@@ -28,7 +28,7 @@ else {
 // prune unnannotated resources if necessary
 	$pdf_export=true;
 
-	if (count($resources)==0){$pdf_export=false;}
+	//if (count($resources)==0){$pdf_export=false;}
 
 
 # Fetch search details (for next/back browsing and forwarding of search params)

@@ -110,9 +110,15 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pageheight=$pagesize[1]=$height;
 	
 	$pdf = new MYPDF("portrait", "in", $size, true, 'UTF-8', false);
-	
+	$versionstrfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/lib/tcpdf/composer.json');
+	$jsonarray = json_decode($versionstrfile, true);
+	$versionstring = $jsonarray['version'];
 	if ($pdf_export_ttf_header_font_path) {	
+	if (version_compare($versionstring, '6.2.0', '>=')) {
+	$ttf_header_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_header_font_path);
+	} else {
 	$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_header_font_path, 'TrueTypeUnicode', '', 32);
+	}
 	$pdf->SetFont($ttf_header_font, '', 15);
 	} else {
 	$pdf->SetFont('helvetica', 'B', 15,'',false);
@@ -169,15 +175,27 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$logourl = $pdf_export_logo_url;
 			$filename_from_url = parse_url($logourl);
 			$logoext = pathinfo($filename_from_url['path'], PATHINFO_EXTENSION);
+			if (($logoext != 'svg') && ($logourl !='')) {
 			$logosizes = getimagesize($logourl);
 			$logoextension = image_type_to_extension($logosizes[2]);
 			$logowidth = ($logosizes[0]/139.5);
 			$logoheight = ($logosizes[1]/139.5);
+			}
+			if ($logourl !='') {
+			if ($logoext == 'svg') { 
+			$pdf->ImageSVG($logourl,0,.3,$width-1,0,'','','C',0,true);
+			} else {
 			$pdf->Image($logourl,.5,.3,$logowidth,$logoheight,$logoext);
-			$righttitle=str_replace("<br />","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
-			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.44,.8, true, 0);
+			}}
+			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
+			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,.8, true, 0,false,false);		
 			if ($pdf_export_ttf_list_font_path) {
-			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path, 'TrueTypeUnicode', '', 32);
+			if (version_compare($versionstring, '6.2.0', '>=')) {
+			$ttf_list_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path);
+			} else {
+			// old style for prior version of TCPDF
+			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path,'','','','',3,1,false,false);
+			}
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {
 			$pdf->SetFont('helvetica', '', 10,'',false);
@@ -205,7 +223,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 				$notepages=1; // Normally notes will all fit on one page, but may not
 				if ($onetimenotes) {
 				$pdf->SetLineStyle($style1);
-				$pdf->MultiRow($lang["onetimenotes"],$onetimenotes);
+				$pdf->MultiRow($lang["onetimenotes"],str_replace("\\r\\n","\n",$onetimenotes));
 				$ypos=$pdf->GetY();									
 				$pdf->SetY($ypos);
 				$pdf->Line(.5,$ypos,$pdf->getPageWidth()-.5,$ypos);
@@ -213,14 +231,14 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 				foreach ($includearr as $include) {
 					$fieldsf = get_field($include);
 					// If the notes took us to a new page, return to the image page before marking annotation
-					if($notepages>1){$pdf->setPage($currentpdfpage);}
+					//if($notepages>1){$pdf->setPage($currentpdfpage);}
 										
 					$ypos=$pdf->GetY();			
 										
 					$pdf->SetY($ypos);
 					$pdf->SetLineStyle($style);
 					// If the notes went over the page, we  went back to image for annotation, so we need to return to the page with the last row of the table before adding next row
-					if($notepages>1){$pdf->setPage($currentpdfpage+($notepages-1));}
+					//if($notepages>1){$pdf->setPage($currentpdfpage+($notepages-1));}
 					if (($whereabouts)&&($include =='w')) {
 					$pdf->MultiRow($whereabouts[0]['title'],ltrim(trim($whereabouts[0]['value']),','));
 					} else {

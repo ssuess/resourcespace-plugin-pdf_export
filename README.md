@@ -21,6 +21,7 @@ Download the whole diretory and rename to "pdf_export". Then you can install it 
 
 
 ## Changelog
+* `v 1.3` - Support for svg header (requires newer TCPDF),Collection export, Title alignment, multiline formatting (respects line breaks)
 * `v 1.2` - Added notes on output, Font Awesome icon, cleanup of PDF layout, various code fixes, French language file.
 * `v 1.1` - Fields list config is now by include, not exclude. And order of fields determines order output to PDF.
 * `v 1.0` - Initial Release

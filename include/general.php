@@ -135,16 +135,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$versionstrfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/lib/tcpdf/composer.json');
 	$jsonarray = json_decode($versionstrfile, true);
 	$versionstring = $jsonarray['version'];
-	if ($ttfheaderfontvar) {	
-	if (version_compare($versionstring, '6.2.0', '>=')) {
-	$ttf_header_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar);
-	} else {
-	$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
-	}
-	$pdf->SetFont($ttf_header_font, '', 15);
-	} else {
-	$pdf->SetFont('helvetica', 'B', 15,'',false);
-	}
+	
 	// set document information
 	$pdf->SetCreator(PDF_CREATOR);
 	$pdf->SetAuthor($userfullname);
@@ -210,6 +201,16 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			} else {
 			$pdf->Image($logourl,.5,.3,$logowidth,$logoheight,$logoext);
 			}}
+			if ($ttfheaderfontvar) {	
+			if (version_compare($versionstring, '6.2.0', '>=')) {
+			$ttf_header_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar);
+			} else {
+			$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
+			}
+			$pdf->SetFont($ttf_header_font, '', 15);
+			} else {
+			$pdf->SetFont('helvetica', 'B', 15,'',false);
+			}
 			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,.8, true, 0,false,false);		
 			if ($ttflistfontvar) {
@@ -241,7 +242,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
 			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid"))) {
-			$ypos=($imageheight*.75)+($titleheight*1.9)+1.3;$pdf->SetY($ypos);
+			$ypos=($imageheight*$paperratio)+($titleheight*1.9)+1.3;$pdf->SetY($ypos);
 			} else {
 			$ypos=$imageheight+($titleheight*1.9)+1.5;$pdf->SetY($ypos);
 			}

@@ -81,6 +81,7 @@ location.reload();
 		preview : function() { 
 			var url = '<?php echo $baseurl_short?>plugins/pdf_export/pages/pdf_export_gen.php';
         	var confignameval = jQuery('#configselect').val();
+        	jQuery("#configname").val(confignameval);
         	if (confignameval ==''){
   			jQuery("a#deleteconfig").hide();
   			} else {
@@ -187,6 +188,8 @@ foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
 <form method=post name="annotateform" id="annotateform" action="<?php echo $baseurl_short?>plugins/pdf_export/pages/pdf_export_gen.php" >
 <input type=hidden name="ref" value="<?php echo $ref?>">
 <input type=hidden name="uniqid" value="<?php echo $uniqid?>">
+<input type=hidden name="configname" id="configname" value="">
+
 
 <?php if ($is_collection){?>
 <div class="Question">

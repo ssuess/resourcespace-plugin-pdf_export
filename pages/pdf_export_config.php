@@ -236,23 +236,6 @@ foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
 //echo "<pre>";
 //print_r($includearr);
 //echo "</pre>";
-$imgpath = get_resource_path($ref,true,"scr",false,"jpg",-1,1,0);
-			$imagesize=getimagesize($imgpath);
-			$width=297/25.4;
-			$height=420/25.4;
-			$whratio=$imagesize[0]/$imagesize[1];
-			$hwratio=$imagesize[1]/$imagesize[0];
-	
-			if ($whratio<1){
-			$imageheight=$height-7; // vertical images can take up half the page
-			$whratio=$imagesize[0]/$imagesize[1];
-			$imagewidth=$imageheight*$whratio;}
-			if ($whratio>=1 || $imagewidth>$width+1){
-			$imagewidth=$width-1; // horizontal images are scaled to width - 1 in
-			$hwratio=$imagesize[1]/$imagesize[0];
-			$imageheight=$imagewidth*$hwratio;}
-			echo "height:" . round($imageheight,2) . " width:" . round($imagewidth,2);
-
 ?>
 </div>
 

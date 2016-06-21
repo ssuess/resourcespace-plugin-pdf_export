@@ -24,8 +24,9 @@ function get_pdf_export_file_path($ref,$getfilepath,$extension){
 	if ($uniqid!=""){$uniqfolder="/".$uniqid;} else {$uniqfolder="";}
 	
 	$tmpfolder=get_temp_dir(!$getfilepath,"pdf_export$uniqfolder");
-	$file=$tmpfolder."/$uniqid-annotations.".$extension;
-
+	$file=$tmpfolder."/$uniqid-pdf_export.".$extension;
+// wait for a half second
+usleep(500000);
 	return  $file;
 }
 	
@@ -35,7 +36,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once($storagedir.'/../include/search_functions.php');
@@ -110,14 +111,35 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pageheight=$pagesize[1]=$height;
 	
 	$pdf = new MYPDF("portrait", "in", $size, true, 'UTF-8', false);
+	$selectedconfig=getvalescaped("configname","");
+	if ($selectedconfig!="") {
+	$configfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/filestore/pdf_export/jsonconfigs/'. $selectedconfig);
+	$configarray = json_decode($configfile, true);
+	} else {
+	$configarray="";
+	}
+	if ($configarray!="") {
+	$ttfheaderfontvar = $configarray[0]['value'];
+	$ttflistfontvar = $configarray[1]['value'];
+	$logourlvar = $configarray[2]['value'];
+	$imagesizeidvar = $configarray[3]['value'];
+	$exportfieldslistvar = $configarray[4]['value'];
+	} else {
+	$ttfheaderfontvar = $pdf_export_ttf_header_font_path;
+	$ttflistfontvar = $pdf_export_ttf_list_font_path;
+	$logourlvar = $pdf_export_logo_url;
+	$imagesizeidvar = $pdf_export_imagesizeid;
+	$exportfieldslistvar = $pdf_export_fields_include_hidden;
+	}
+	
 	$versionstrfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/lib/tcpdf/composer.json');
 	$jsonarray = json_decode($versionstrfile, true);
 	$versionstring = $jsonarray['version'];
-	if ($pdf_export_ttf_header_font_path) {	
+	if ($ttfheaderfontvar) {	
 	if (version_compare($versionstring, '6.2.0', '>=')) {
-	$ttf_header_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_header_font_path);
+	$ttf_header_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar);
 	} else {
-	$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_header_font_path, 'TrueTypeUnicode', '', 32);
+	$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
 	}
 	$pdf->SetFont($ttf_header_font, '', 15);
 	} else {
@@ -132,7 +154,8 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdf->setPrintHeader(false);
 	$pdf->setPrintFooter(false);
 	$pdf->setMargins(.5,.5,.5);
-	$includearr=explode(",",$pdf_export_fields_include);
+
+	$includearr=explode(",",$exportfieldslistvar);
 	
 	$page=1;
 	$totalpages=1;
@@ -148,8 +171,8 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$ref=$resources[$n]['ref'];
 			$access=get_resource_access($resources[$n]['ref']); // feed get_resource_access the resource array rather than the ref, since access is included.
 			$use_watermark=check_use_watermark();
-			if ($pdf_export_imagesizeid) {
-			$imagesizeid = $pdf_export_imagesizeid;
+			if ($imagesizeidvar) {
+			$imagesizeid = $imagesizeidvar;
 			} else {
 			$imagesizeid = "hpr";
 			}
@@ -172,7 +195,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$imagewidth=$width-1; // horizontal images are scaled to width - 1 in
 			$hwratio=$imagesize[1]/$imagesize[0];
 			$imageheight=$imagewidth*$hwratio;}
-			$logourl = $pdf_export_logo_url;
+			$logourl = $logourlvar;
 			$filename_from_url = parse_url($logourl);
 			$logoext = pathinfo($filename_from_url['path'], PATHINFO_EXTENSION);
 			if (($logoext != 'svg') && ($logourl !='')) {
@@ -189,28 +212,39 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			}}
 			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,.8, true, 0,false,false);		
-			if ($pdf_export_ttf_list_font_path) {
+			if ($ttflistfontvar) {
 			if (version_compare($versionstring, '6.2.0', '>=')) {
-			$ttf_list_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path);
+			$ttf_list_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttflistfontvar);
 			} else {
 			// old style for prior version of TCPDF
-			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$pdf_export_ttf_list_font_path,'','','','',3,1,false,false);
+			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttflistfontvar,'','','','',3,1,false,false);
 			}
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
-			//$pdf->Image($imgpath,((($width-1)/2)-($imagewidth-1)/2),1.5,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);
 			$titleheight = $pdf->getStringHeight(0,$righttitle);	
+			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid"))) {
+			if ($size == "a3") {
+			$paperratio ='.68';
+			} else {
+			$paperratio ='.728';
+			}
+			$pdf->Image($imgpath,.5,(($titleheight*1.9)+1.1),$imagewidth*$paperratio,$imageheight*$paperratio,"jpg",$baseurl. '/?r=' . $ref);
+			} else {
 			$pdf->Image($imgpath,.5,($titleheight*1.9)+1.1,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
-	
+			}
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->setCellPaddings(0.01, 0.06, 0.01, 0.1);
 			$style= array('width' => 0.01, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(192,192,192));
 			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
+			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid"))) {
+			$ypos=($imageheight*.75)+($titleheight*1.9)+1.3;$pdf->SetY($ypos);
+			} else {
 			$ypos=$imageheight+($titleheight*1.9)+1.5;$pdf->SetY($ypos);
+			}
 			unset($notes);
 				if ($pdf_export_whereabouts_integration) {
 				$checkwherabouts = sql_query("SHOW TABLES LIKE 'whereabouts'");

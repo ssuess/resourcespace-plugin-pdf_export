@@ -59,13 +59,35 @@ $jpghttppath=get_pdf_export_file_path($realref,false,"jpg");
 var pdf_export_previewimage_prefix = "";
 
 (function($) {
+
+jQuery("a#deleteconfig").live('click', function(event) {
+ event.preventDefault();
+        var confignamevalue = jQuery('#configselect').val();
+    	var dataString = 'configname='+ confignamevalue;
+
+  console.log(dataString);
+  jQuery.ajax({
+type: "POST",
+url: "<?php echo $baseurl_short?>plugins/pdf_export/pages/deljsonconfig.php",
+data: dataString,
+cache: false,
+success: function(result){
+location.reload();
+}});
+});
 	
 	 var methods = {
 		
 		preview : function() { 
 			var url = '<?php echo $baseurl_short?>plugins/pdf_export/pages/pdf_export_gen.php';
+        	var confignameval = jQuery('#configselect').val();
+        	if (confignameval ==''){
+  			jQuery("a#deleteconfig").hide();
+  			} else {
+  			jQuery("a#deleteconfig").show();
+  			}
 
-			var formdata = $('#annotateform').serialize() + '&preview=true'; 
+			var formdata = $('#annotateform').serialize() + '&preview=true&configname='+ confignameval; 
 
 			$.ajax(url,{
 			data: formdata,
@@ -149,7 +171,14 @@ function loadIt() {
 <?php if ($pdf_export){?>
 <div id="heading" class="BasicsBox" style="float:left;margin-bottom:0;" >
 <p id="introtext"><?php echo $lang["pdf_exportpdfintrotext"]?></p>
-
+<p class="pickconfig"><?php echo $lang["pdf_export_chooseconfig"]?> <?php $file_matcher = '../../../filestore/pdf_export/jsonconfigs/*.{json}';
+if (glob($file_matcher, GLOB_BRACE)){
+$myselect ='';
+foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
+  $file_name = basename($myfile);
+  $withoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file_name);
+  $myselect .= "<option value='$file_name'>$withoutExt</option>\n";
+} ?><select id="configselect" onChange="jQuery().annotate('preview');"><option value="" selected>Last Saved Config</option><?php echo $myselect; ?></select><a href="#" id="deleteconfig"><i class="fa fa-arrow-left"></i> delete config</a></p><?php } ?>
 </div>
 <div style="clear:left;"></div>
 
@@ -207,6 +236,23 @@ function loadIt() {
 //echo "<pre>";
 //print_r($includearr);
 //echo "</pre>";
+$imgpath = get_resource_path($ref,true,"scr",false,"jpg",-1,1,0);
+			$imagesize=getimagesize($imgpath);
+			$width=297/25.4;
+			$height=420/25.4;
+			$whratio=$imagesize[0]/$imagesize[1];
+			$hwratio=$imagesize[1]/$imagesize[0];
+	
+			if ($whratio<1){
+			$imageheight=$height-7; // vertical images can take up half the page
+			$whratio=$imagesize[0]/$imagesize[1];
+			$imagewidth=$imageheight*$whratio;}
+			if ($whratio>=1 || $imagewidth>$width+1){
+			$imagewidth=$width-1; // horizontal images are scaled to width - 1 in
+			$hwratio=$imagesize[1]/$imagesize[0];
+			$imageheight=$imagewidth*$hwratio;}
+			echo "height:" . round($imageheight,2) . " width:" . round($imagewidth,2);
+
 ?>
 </div>
 

@@ -36,3 +36,10 @@
 	width: 100% !important;
 	
 }
+#pdfconfigwrapper label {
+	padding-right: 10px;
+}
+a#deleteconfig {
+	font-size: 11px;
+	margin-left: 5px;
+}

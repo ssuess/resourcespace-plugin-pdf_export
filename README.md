@@ -16,11 +16,13 @@ Download the whole diretory and rename to "pdf_export". Then you can install it 
 - Resource Types to exclude (pick from list). This will hide PDF Export link from the view pages of those resources.
 - Fonts: can configure a filepath (relative to webroot, not a URL) to a custom font (ttf file) that sits on your server for heading (usually bold) and body/list text (usually regular).
 - URL to image to use as header (I would keep it to around 60px tall) 
-- Fields to include (comma separated list of metadata field IDs, ie: 67,73,78,etc)
+- Fields to include (2 fields, multiselect and comma separated list of metadata field IDs, ie: 67,73,78,etc)
 - Image size to use in PDF. Defaults to "hdr", but for some installs this is huge and unnecessary. 
+- Integration with [whereabouts plugin](https://github.com/ssuess/resourcespace-plugin-whereabouts)  (if installed)
 
 
 ## Changelog
+* `v 1.4` - Saved configs. New easier multiselect for fields. If upgrading, will purge previous config. 
 * `v 1.3` - Support for svg header (requires newer TCPDF),Collection export, Title alignment, multiline formatting (respects line breaks)
 * `v 1.2` - Added notes on output, Font Awesome icon, cleanup of PDF layout, various code fixes, French language file.
 * `v 1.1` - Fields list config is now by include, not exclude. And order of fields determines order output to PDF.

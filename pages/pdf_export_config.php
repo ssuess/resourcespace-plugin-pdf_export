@@ -178,7 +178,7 @@ foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
   $file_name = basename($myfile);
   $withoutExt = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file_name);
   $myselect .= "<option value='$file_name'>$withoutExt</option>\n";
-} ?><select id="configselect" onChange="jQuery().annotate('preview');"><option value="" selected>Last Saved Config</option><?php echo $myselect; ?></select><a href="#" id="deleteconfig"><i class="fa fa-arrow-left"></i> delete config</a></p><?php } ?>
+} ?><select id="configselect" onChange="jQuery().annotate('preview');"><option value="" selected>Last Saved Config</option><?php echo $myselect; ?></select><a href="#" id="deleteconfig"><i class="fa fa-arrow-left"></i> delete config</a></p><?php } else { ?><select id="configselect" onChange="jQuery().annotate('preview');"><option value="" selected>Last Saved Config</option></select><?php }?>
 </div>
 <div style="clear:left;"></div>
 
@@ -236,6 +236,7 @@ foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
 //echo "<pre>";
 //print_r($includearr);
 //echo "</pre>";
+
 ?>
 </div>
 

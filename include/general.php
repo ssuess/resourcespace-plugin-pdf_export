@@ -50,7 +50,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdfhttppath=get_pdf_export_file_path($ref,false,"pdf");
 	$jpghttppath=get_pdf_export_file_path($ref,false,"jpg");
 	$onetimenotes=getvalescaped("onetimenotes","");
-
+	if(function_exists("ssrscm")){
+    $realref=ssrscm($ref);
+	} else {
+	$realref = $ref;
+	}
 	
 	class MYPDF extends TCPDF {
 
@@ -169,13 +173,15 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			} else {
 			$imagesizeid = "hpr";
 			}
-			$imgpath = get_resource_path($ref,true,$imagesizeid,false,"jpg",-1,$page,$use_watermark);
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($ref,true,"lpr",false,"jpg",-1,$page,$use_watermark);}
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($ref,true,"scr",false,"jpg",-1,$page,$use_watermark);}
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($ref,true,"",false,"jpg",-1,$page,$use_watermark);}
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($ref,true,"pre",false,"jpg",-1,$page,$use_watermark);}
+			
+			$imgpath = get_resource_path($realref,true,$imagesizeid,false,"jpg",-1,$page,$use_watermark);
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"lpr",false,"jpg",-1,$page,$use_watermark);}
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"scr",false,"jpg",-1,$page,$use_watermark);}
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"",false,"jpg",-1,$page,$use_watermark);}
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"pre",false,"jpg",-1,$page,$use_watermark);}
 			if (!file_exists($imgpath))continue;
 			$imagesize=getimagesize($imgpath);
+			
 			
 			$whratio=$imagesize[0]/$imagesize[1];
 			$hwratio=$imagesize[1]/$imagesize[0];

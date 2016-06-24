@@ -22,6 +22,7 @@ $page_def[] = config_add_text_input('pdf_export_ttf_list_font_path', $lang["pdf_
 //$page_def[] = config_add_boolean_select('pdf_export_debug', $lang['pdf_exportdebug']);
 $page_def[] = config_add_text_input('pdf_export_logo_url', $lang["pdf_export_logo_url"]);
 $page_def[] = config_add_text_input('pdf_export_imagesizeid', $lang["pdf_export_imagesizeid"]);
+$page_def[] = config_add_text_input('pdf_export_imgheight', $lang["pdf_export_imgheight"]);
 
 $pdf_export_full_fields_options=array();
 $allfields = sql_query('SELECT ref, title FROM resource_type_field;');

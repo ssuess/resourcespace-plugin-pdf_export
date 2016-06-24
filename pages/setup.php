@@ -21,6 +21,7 @@ $page_def[] = config_add_text_input('pdf_export_ttf_header_font_path', $lang["pd
 $page_def[] = config_add_text_input('pdf_export_ttf_list_font_path', $lang["pdf_export_ttf_list_font_path"]);
 //$page_def[] = config_add_boolean_select('pdf_export_debug', $lang['pdf_exportdebug']);
 $page_def[] = config_add_text_input('pdf_export_logo_url', $lang["pdf_export_logo_url"]);
+$page_def[] = config_add_text_input('pdf_export_logo_deets', $lang["pdf_export_logo_deets"]);
 $page_def[] = config_add_text_input('pdf_export_imagesizeid', $lang["pdf_export_imagesizeid"]);
 $page_def[] = config_add_text_input('pdf_export_imgheight', $lang["pdf_export_imgheight"]);
 

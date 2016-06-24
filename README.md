@@ -23,6 +23,7 @@ Download the whole diretory and rename to "pdf_export". Then you can install it 
 
 
 ## Changelog
+* `v 1.6` - Set size and location of header. Better flow and positioning for all elements. 
 * `v 1.5` - Set image height! Fixed horizontal image formatting on letter and legal. 
 * `v 1.4.1` - bugfix, configs were only being applied to preview, not create 
 * `v 1.4` - Saved configs. New easier multiselect for fields. If upgrading, will purge previous config. 

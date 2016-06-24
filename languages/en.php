@@ -21,6 +21,9 @@ $lang["pdf_export_logo_url"]="PDF header image (URL)<br />Supports jpg, png, and
 } else {
 $lang["pdf_export_logo_url"]="PDF header image (URL)<br />Supports jpg and png<br /><br />";
 }
+$lang["pdf_export_logo_deets"]="Header image: Left, Top, Width and Height<br />(numeric and comma separated. Use 0 for auto calc of width/height.)<br /><br />";
+
+
 $lang["pdf_export_fields_include"]="Fields to include in the export, in order<br /><br />";
 $lang["pdf_export_fields_include_hidden"]="This field just shows the IDs (see <a href='/pages/admin/admin_resource_type_fields.php'>here</a>) from fields you chose above. You can type or rearrange them by hand here to change the order above.<br /><br />";
 $lang["pdf_export_ttf_header_font_path"]="Header font conversion from ttf (filepath)<br />(relative to webroot)<br /><br />";

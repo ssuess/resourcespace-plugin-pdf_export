@@ -17,11 +17,13 @@ Download the whole diretory and rename to "pdf_export". Then you can install it 
 - Fonts: can configure a filepath (relative to webroot, not a URL) to a custom font (ttf file) that sits on your server for heading (usually bold) and body/list text (usually regular).
 - URL to image to use as header (I would keep it to around 60px tall) 
 - Fields to include (2 fields, multiselect and comma separated list of metadata field IDs, ie: 67,73,78,etc)
-- Image size to use in PDF. Defaults to "hdr", but for some installs this is huge and unnecessary. 
+- Image size to use in PDF. Defaults to "hdr", but for some installs this is huge and unnecessary.
+- Set image height (inches) 
 - Integration with [whereabouts plugin](https://github.com/ssuess/resourcespace-plugin-whereabouts)  (if installed)
 
 
 ## Changelog
+* `v 1.5` - Set image height! Fixed horizontal image formatting on letter and legal. 
 * `v 1.4.1` - bugfix, configs were only being applied to preview, not create 
 * `v 1.4` - Saved configs. New easier multiselect for fields. If upgrading, will purge previous config. 
 * `v 1.3` - Support for svg header (requires newer TCPDF),Collection export, Title alignment, multiline formatting (respects line breaks)

@@ -12,5 +12,5 @@ $pdf_export_fields_include_hidden ="";
 $pdf_export_ttf_header_font_path="";
 $pdf_export_ttf_list_font_path="";
 $pdf_export_imagesizeid="";
-
+$pdf_export_imgheight="6";
 $pdf_export_whereabouts_integration=false;

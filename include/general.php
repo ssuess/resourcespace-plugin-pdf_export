@@ -36,7 +36,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once($storagedir.'/../include/search_functions.php');
@@ -123,11 +123,13 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$ttflistfontvar = $configarray[1]['value'];
 	$logourlvar = $configarray[2]['value'];
 	$imagesizeidvar = $configarray[3]['value'];
-	$exportfieldslistvar = $configarray[4]['value'];
+	$pdf_export_imgheight = $configarray[4]['value'];
+	$exportfieldslistvar = $configarray[5]['value'];
 	} else {
 	$ttfheaderfontvar = $pdf_export_ttf_header_font_path;
 	$ttflistfontvar = $pdf_export_ttf_list_font_path;
 	$logourlvar = $pdf_export_logo_url;
+	$pdf_export_imgheight=6;
 	$imagesizeidvar = $pdf_export_imagesizeid;
 	$exportfieldslistvar = $pdf_export_fields_include_hidden;
 	}
@@ -179,7 +181,8 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$hwratio=$imagesize[1]/$imagesize[0];
 	
 			if ($whratio<1){
-			$imageheight=$height-7; // vertical images can take up half the page
+			//$imageheight=$height-7; // vertical images can take up half the page
+			$imageheight=$pdf_export_imgheight; // height variable
 			$whratio=$imagesize[0]/$imagesize[1];
 			$imagewidth=$imageheight*$whratio;}
 			if ($whratio>=1 || $imagewidth>$width+1){
@@ -225,15 +228,19 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
 			$titleheight = $pdf->getStringHeight(0,$righttitle);	
-			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid"))) {
+			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid") || ($size == "letter") || ($size == "legal"))) {
 			if ($size == "a3") {
 			$paperratio ='.68';
-			} else {
+			} elseif ($size == "tabloid") {
 			$paperratio ='.728';
+			} elseif ($size == "letter") {
+			$paperratio ='.97';	
+			} elseif ($size == "legal") {
+			$paperratio ='.97';
 			}
-			$pdf->Image($imgpath,.5,(($titleheight*1.9)+1.1),$imagewidth*$paperratio,$imageheight*$paperratio,"jpg",$baseurl. '/?r=' . $ref);
+			$pdf->Image($imgpath,.5,(($titleheight*1.9)+1),$imagewidth*$paperratio,$imageheight*$paperratio,"jpg",$baseurl. '/?r=' . $ref);
 			} else {
-			$pdf->Image($imgpath,.5,($titleheight*1.9)+1.1,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
+			$pdf->Image($imgpath,.5,($titleheight*1.9)+1,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 			}
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
@@ -244,7 +251,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid"))) {
 			$ypos=($imageheight*$paperratio)+($titleheight*1.9)+1.3;$pdf->SetY($ypos);
 			} else {
-			$ypos=$imageheight+($titleheight*1.9)+1.5;$pdf->SetY($ypos);
+			$ypos=$imageheight+($titleheight*1.9)+1.4;$pdf->SetY($ypos);
 			}
 			unset($notes);
 				if ($pdf_export_whereabouts_integration) {

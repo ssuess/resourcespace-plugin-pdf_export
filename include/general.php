@@ -140,10 +140,6 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$exportfieldslistvar = $pdf_export_fields_include_hidden;
 	}
 	
-	$versionstrfile = file_get_contents('../../../lib/tcpdf/composer.json');
-	$jsonarray = json_decode($versionstrfile, true);
-	$versionstring = $jsonarray['version'];
-	
 	// set document information
 	$pdf->SetCreator(PDF_CREATOR);
 	$pdf->SetAuthor($userfullname);
@@ -234,11 +230,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->Image($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,$logoext);
 			}}
 			if ($ttfheaderfontvar) {	
-			if (version_compare($versionstring, '6.2.0', '>=')) {
-			$ttf_header_font = TCPDF_FONTS::addTTFfont('../../../'.$ttfheaderfontvar);
-			} else {
 			$ttf_header_font = $pdf->addTTFfont('../../../'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
-			}
 			$pdf->SetFont($ttf_header_font, '', 15);
 			} else {
 			$pdf->SetFont('helvetica', 'B', 15,'',false);
@@ -247,45 +239,23 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$mylogoheight, true, 0,false,false);		
 			if ($ttflistfontvar) {
-			if (version_compare($versionstring, '6.2.0', '>=')) {
-			$ttf_list_font = TCPDF_FONTS::addTTFfont('../../../'.$ttflistfontvar);
-			} else {
-			// old style for prior version of TCPDF
 			$ttf_list_font = $pdf->addTTFfont('../../../'.$ttflistfontvar,'','','','',3,1,false,false);
-			}
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
 			$titleheight = $pdf->getStringHeight(0,$righttitle);	
-			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid") || ($size == "letter") || ($size == "legal"))) {
-			if ($size == "a3") {
-			$paperratio ='.68';
-			} elseif ($size == "tabloid") {
-			$paperratio ='.728';
-			} elseif ($size == "letter") {
-			$paperratio ='.97';	
-			} elseif ($size == "legal") {
-			$paperratio ='.97';
-			}
-			$ypos=$mylogoheight+.5;$pdf->SetY($ypos);
-			$pdf->Image($imgpath,.5,$ypos+$titleheight+.5,$imagewidth*$paperratio,$imageheight*$paperratio,"jpg",$baseurl. '/?r=' . $ref);
-			} else {
 			$ypos=$mylogoheight+.5;$pdf->SetY($ypos);
 			$pdf->Image($imgpath,.5,$ypos+$titleheight+.5,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
-			}
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->setCellPaddings(0.01, 0.06, 0.01, 0.1);
 			$style= array('width' => 0.01, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(192,192,192));
 			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
-			if ((version_compare($versionstring, '6.2.0', '>='))&&(($size == "a3")||($size == "tabloid"))) {
-			$ypos=$pdf->GetY();
-			$ypos=($imageheight*$paperratio)+($titleheight)+($mylogoheight)+.5;$pdf->SetY($ypos);
-			} else {
+			
 			$ypos=$imageheight+($titleheight)+($mylogoheight)+.5;$pdf->SetY($ypos);
-			}
+			
 			unset($notes);
 				if ($pdf_export_whereabouts_integration) {
 				$checkwherabouts = sql_query("SHOW TABLES LIKE 'whereabouts'");

@@ -51,9 +51,9 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$jpghttppath=get_pdf_export_file_path($ref,false,"jpg");
 	$onetimenotes=getvalescaped("onetimenotes","");
 	if(function_exists("ssrscm")){
-    $realref=ssrscm($ref);
+    $cprealref=ssrscm($ref);
 	} else {
-	$realref = $ref;
+	$cprealref = $ref;
 	}
 	
 	class MYPDF extends TCPDF {
@@ -117,7 +117,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdf = new MYPDF("portrait", "in", $size, true, 'UTF-8', false);
 	$selectedconfig=getvalescaped("configname","");
 	if ($selectedconfig!="") {
-	$configfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/filestore/pdf_export/jsonconfigs/'. $selectedconfig);
+	$configfile = file_get_contents('../../../filestore/pdf_export/jsonconfigs/'. $selectedconfig);
 	$configarray = json_decode($configfile, true);
 	} else {
 	$configarray="";
@@ -138,7 +138,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$exportfieldslistvar = $pdf_export_fields_include_hidden;
 	}
 	
-	$versionstrfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/lib/tcpdf/composer.json');
+	$versionstrfile = file_get_contents('../../../lib/tcpdf/composer.json');
 	$jsonarray = json_decode($versionstrfile, true);
 	$versionstring = $jsonarray['version'];
 	
@@ -174,11 +174,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$imagesizeid = "hpr";
 			}
 			
-			$imgpath = get_resource_path($realref,true,$imagesizeid,false,"jpg",-1,$page,$use_watermark);
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"lpr",false,"jpg",-1,$page,$use_watermark);}
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"scr",false,"jpg",-1,$page,$use_watermark);}
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"",false,"jpg",-1,$page,$use_watermark);}
-			if (!file_exists($imgpath)){$imgpath=get_resource_path($realref,true,"pre",false,"jpg",-1,$page,$use_watermark);}
+			$imgpath = get_resource_path($cprealref,true,$imagesizeid,false,"jpg",-1,$page,$use_watermark);
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($cprealref,true,"lpr",false,"jpg",-1,$page,$use_watermark);}
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($cprealref,true,"scr",false,"jpg",-1,$page,$use_watermark);}
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($cprealref,true,"",false,"jpg",-1,$page,$use_watermark);}
+			if (!file_exists($imgpath)){$imgpath=get_resource_path($cprealref,true,"pre",false,"jpg",-1,$page,$use_watermark);}
 			if (!file_exists($imgpath))continue;
 			$imagesize=getimagesize($imgpath);
 			
@@ -212,9 +212,9 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			}}
 			if ($ttfheaderfontvar) {	
 			if (version_compare($versionstring, '6.2.0', '>=')) {
-			$ttf_header_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar);
+			$ttf_header_font = TCPDF_FONTS::addTTFfont('../../../'.$ttfheaderfontvar);
 			} else {
-			$ttf_header_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
+			$ttf_header_font = $pdf->addTTFfont('../../../'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
 			}
 			$pdf->SetFont($ttf_header_font, '', 15);
 			} else {
@@ -224,10 +224,10 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,.8, true, 0,false,false);		
 			if ($ttflistfontvar) {
 			if (version_compare($versionstring, '6.2.0', '>=')) {
-			$ttf_list_font = TCPDF_FONTS::addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttflistfontvar);
+			$ttf_list_font = TCPDF_FONTS::addTTFfont('../../../'.$ttflistfontvar);
 			} else {
 			// old style for prior version of TCPDF
-			$ttf_list_font = $pdf->addTTFfont($_SERVER["DOCUMENT_ROOT"].'/'.$ttflistfontvar,'','','','',3,1,false,false);
+			$ttf_list_font = $pdf->addTTFfont('../../../'.$ttflistfontvar,'','','','',3,1,false,false);
 			}
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {

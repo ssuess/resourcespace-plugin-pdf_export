@@ -224,10 +224,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			}
 			if ($logourl !='') {
 			if ($logoext == 'svg') { 
-			$pdf->ImageSVG($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,'','','L',0,true);
+			$pdf->ImageSVG($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,'','','',0,true);
 			} else {
 			$pdf->Image($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,$logoext);
 			}}
+			$logofinalY = $pdf->getImageRBY();
 			if ($ttfheaderfontvar) {	
 			$ttf_header_font = $pdf->addTTFfont('../../../'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
 			$pdf->SetFont($ttf_header_font, '', 15);
@@ -236,11 +237,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			}	
 			$ypos=$pdf->GetY();									
 			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
-			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$mylogoheight, true, 0,false,false);		
+			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$logofinalY, true, 0,false,false);		
 			// store current object
 			$pdf->startTransaction();
 			// get the number of lines for multicell
-			$lines = $pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$mylogoheight, true, 0,false,false);		
+			$lines = $pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$logofinalY, true, 0,false,false);		
 			// restore previous object
 			$pdf = $pdf->rollbackTransaction();
 			if ($ttflistfontvar) {
@@ -250,7 +251,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
 			$titleheight = (($lines*0.20833333333334));
-			$ypos=$mylogoheight+.5+$titleheight+.5;$pdf->SetY($ypos);
+			$ypos=$logofinalY+.5+$titleheight+.5;$pdf->SetY($ypos);
 			$pdf->Image($imgpath,.5,$ypos,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
@@ -259,7 +260,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
 			
-			$ypos=$imageheight+($titleheight)+($mylogoheight)+.5;$pdf->SetY($ypos);
+			$ypos=$imageheight+($titleheight)+($logofinalY)+.5;$pdf->SetY($ypos);
 			
 			unset($notes);
 				if ($pdf_export_whereabouts_integration) {

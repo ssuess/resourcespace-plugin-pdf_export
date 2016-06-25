@@ -206,7 +206,6 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$hwratio=$imagesize[1]/$imagesize[0];
 	
 			if ($whratio<1){
-			//$imageheight=$height-7; // vertical images can take up half the page
 			$imageheight=$pdf_export_imgheight; // height variable
 			$whratio=$imagesize[0]/$imagesize[1];
 			$imagewidth=$imageheight*$whratio;}
@@ -238,15 +237,21 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$ypos=$pdf->GetY();									
 			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$mylogoheight, true, 0,false,false);		
+			// store current object
+			$pdf->startTransaction();
+			// get the number of lines for multicell
+			$lines = $pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$mylogoheight, true, 0,false,false);		
+			// restore previous object
+			$pdf = $pdf->rollbackTransaction();
 			if ($ttflistfontvar) {
 			$ttf_list_font = $pdf->addTTFfont('../../../'.$ttflistfontvar,'','','','',3,1,false,false);
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
-			$titleheight = $pdf->getStringHeight(0,$righttitle);	
-			$ypos=$mylogoheight+.5;$pdf->SetY($ypos);
-			$pdf->Image($imgpath,.5,$ypos+$titleheight+.5,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
+			$titleheight = (($lines*0.20833333333334));
+			$ypos=$mylogoheight+.5+$titleheight+.5;$pdf->SetY($ypos);
+			$pdf->Image($imgpath,.5,$ypos,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->setCellPaddings(0.01, 0.06, 0.01, 0.1);
@@ -269,13 +274,13 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 				if ($onetimenotes) {
 				$pdf->SetLineStyle($style1);
 				$ypos=$pdf->GetY();									
-				$pdf->SetY($ypos+$titleheight+.5);
+				$pdf->SetY($ypos+($titleheight/$lines)+.6);
 				$pdf->MultiRow($lang["onetimenotes"],str_replace("\\r\\n","\n",$onetimenotes));
 				$ypos=$pdf->GetY();									
 				$pdf->SetY($ypos);
 				$pdf->Line(.5,$ypos,$pdf->getPageWidth()-.5,$ypos);
 				} else {
-				$pdf->SetY($ypos+$titleheight+.5);
+				$pdf->SetY($ypos+($titleheight/$lines)+.6);
 				}
 				foreach ($includearr as $include) {
 					$fieldsf = get_field($include);

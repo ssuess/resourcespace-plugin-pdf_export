@@ -21,7 +21,7 @@ $lang["pdf_export_logo_url"]="PDF header image (URL)<br />Supports jpg, png, and
 } else {
 $lang["pdf_export_logo_url"]="PDF header image (URL)<br />Supports jpg and png<br /><br />";
 }
-$lang["pdf_export_logo_deets"]="Header image: Left, Top, Width and Height in inches.<br />(numeric and comma separated. Use 0 for auto calc of width/height.)<br /><br />";
+$lang["pdf_export_logo_deets"]="Header image: Left, Top, Width and Height in inches (numeric and comma separated, use 0 for auto calc of width/height)<br /><br />";
 
 
 $lang["pdf_export_fields_include"]="Fields to include in the export, in order<br /><br />";

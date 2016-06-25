@@ -228,7 +228,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			} else {
 			$pdf->Image($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,$logoext);
 			}}
-			$logofinalY = $pdf->getImageRBY();
+			$logofinalY = $pdf->getImageRBY()-.23;
 			if ($ttfheaderfontvar) {	
 			$ttf_header_font = $pdf->addTTFfont('../../../'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
 			$pdf->SetFont($ttf_header_font, '', 15);

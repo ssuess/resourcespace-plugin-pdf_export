@@ -50,11 +50,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdfhttppath=get_pdf_export_file_path($ref,false,"pdf");
 	$jpghttppath=get_pdf_export_file_path($ref,false,"jpg");
 	$onetimenotes=getvalescaped("onetimenotes","");
-	if(function_exists("ssrscm")){
-    $cprealref=ssrscm($ref);
-	} else {
-	$cprealref = $ref;
-	}
+	
 	
 	class MYPDF extends TCPDF {
 
@@ -185,6 +181,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$currentpdfpage=$pdf->getPage();
 			$resourcedata= $resources[$n];
 			$ref=$resources[$n]['ref'];
+			if(function_exists("ssrscm")){
+    		$cprealref=ssrscm($ref);
+			} else {
+			$cprealref = $ref;
+			}
 			$access=get_resource_access($resources[$n]['ref']); // feed get_resource_access the resource array rather than the ref, since access is included.
 			$use_watermark=check_use_watermark();
 			if ($imagesizeidvar) {

@@ -23,6 +23,7 @@ Download the whole diretory and rename to "pdf_export". Then you can install it 
 
 
 ## Changelog
+* `v 1.6.1` - Fix broken collections output,fix SVG cutoff problem in header,fix header zero height problem, header space tweak
 * `v 1.6` - Set size and location of header. Better flow and positioning for all elements. Removed buggy newer TCPDF support, use more stable older version. 
 * `v 1.5` - Set image height! Fixed horizontal image formatting on letter and legal. 
 * `v 1.4.1` - bugfix, configs were only being applied to preview, not create 

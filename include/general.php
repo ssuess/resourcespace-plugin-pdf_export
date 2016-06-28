@@ -145,7 +145,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdf->setPrintHeader(false);
 	$pdf->setPrintFooter(false);
 	$pdf->setMargins(.5,.5,.5);
-	
+	if($logodeetsvar){
 	$logodeetsarr=explode(",",$logodeetsvar);
 	if ($logodeetsarr[0]) {
 	$mylogoleft = $logodeetsarr[0];
@@ -166,6 +166,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$mylogoheight = $logodeetsarr[3];
 	} else {
 	$mylogoheight=0;
+	}
 	}
 	$includearr=explode(",",$exportfieldslistvar);
 	

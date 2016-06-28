@@ -171,6 +171,12 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$mylogoheight=0;
 	}
 	}
+	if (!isset($mylogoleft)){
+	$mylogoleft=.5;
+	$mylogotop=.5;
+	$mylogowidth=0;
+	$mylogoheight=0;
+	}
 	$includearr=explode(",",$exportfieldslistvar);
 	
 	$page=1;
@@ -265,11 +271,12 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			if ($lines>0) {
 			$titleheight = (($lines*0.20833333333334));
 			$titlelineratio = ($titleheight/$lines);
-			} else {
-			$titleheight = -.27;
-			$titlelineratio = .2;
-			}
 			$ypos=$logofinalY+.5+$titleheight+.5;$pdf->SetY($ypos);
+			} else {
+			$titleheight = 0;
+			$titlelineratio = .2;
+			$ypos=$logofinalY+$titleheight+.5;$pdf->SetY($ypos);
+			}
 			$pdf->Image($imgpath,.5,$ypos,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
@@ -277,10 +284,12 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$style= array('width' => 0.01, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(192,192,192));
 			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
-			
+			if ($lines>0) {
 			$ypos=$imageheight+($titleheight)+($logofinalY)+.5;$pdf->SetY($ypos);
-			
-			unset($notes);
+			} else {
+			$ypos=$imageheight+($titleheight)+($logofinalY);$pdf->SetY($ypos);
+			}
+			unset($whereabouts);
 				if ($pdf_export_whereabouts_integration) {
 				$checkwherabouts = sql_query("SHOW TABLES LIKE 'whereabouts'");
 				if ($checkwherabouts) {
@@ -301,6 +310,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 				} else {
 				$pdf->SetY($ypos+($titlelineratio)+.6);
 				}
+				if ($exportfieldslistvar) {
 				foreach ($includearr as $include) {
 					$fieldsf = get_field($include);
 					// If the notes took us to a new page, return to the image page before marking annotation
@@ -326,7 +336,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 					$ypos=$ypos+.5;$m++;				
 					
 					}
-						
+					}	
 			}
 		// Check if there is another page?
 		if (file_exists(get_resource_path($ref,true,"scr",false,"jpg",-1,$page+1,$use_watermark,""))) {unset($notepos);unset($lastnotepos);$totalpages++;}

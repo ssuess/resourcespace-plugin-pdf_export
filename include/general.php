@@ -271,7 +271,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			if ($lines>0) {
 			$titleheight = (($lines*0.20833333333334));
 			$titlelineratio = ($titleheight/$lines);
-			$ypos=$logofinalY+.5+$titleheight+.5;$pdf->SetY($ypos);
+			$ypos=$logofinalY+.5+$titleheight+.44;$pdf->SetY($ypos);
 			} else {
 			$titleheight = 0;
 			$titlelineratio = .2;

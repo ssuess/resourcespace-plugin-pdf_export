@@ -36,7 +36,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $pdf_export_exclude_title,$pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once($storagedir.'/../include/search_functions.php');
@@ -124,16 +124,18 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$logourlvar = $configarray[2]['value'];
 	$logodeetsvar=$configarray[3]['value'];
 	$imagesizeidvar = $configarray[4]['value'];
-	$pdf_export_imgheight = $configarray[5]['value'];
+	$imageheightvar = $configarray[5]['value'];
 	$exportfieldslistvar = $configarray[6]['value'];
+	$excludetitlevar = $configarray[9]['value'];
 	} else {
 	$ttfheaderfontvar = $pdf_export_ttf_header_font_path;
 	$ttflistfontvar = $pdf_export_ttf_list_font_path;
 	$logourlvar = $pdf_export_logo_url;
 	$logodeetsvar=$pdf_export_logo_deets;
-	$pdf_export_imgheight=$pdf_export_imgheight;
+	$imageheightvar=$pdf_export_imgheight;
 	$imagesizeidvar = $pdf_export_imagesizeid;
 	$exportfieldslistvar = $pdf_export_fields_include_hidden;
+	$excludetitlevar = $pdf_export_exclude_title;
 	}
 	
 	// set document information
@@ -145,6 +147,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$pdf->setPrintHeader(false);
 	$pdf->setPrintFooter(false);
 	$pdf->setMargins(.5,.5,.5);
+	$pdf->SetAutoPageBreak(TRUE, .5);
 	if($logodeetsvar){
 	$logodeetsarr=explode(",",$logodeetsvar);
 	if ($logodeetsarr[0]) {
@@ -208,7 +211,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$hwratio=$imagesize[1]/$imagesize[0];
 	
 			if ($whratio<1){
-			$imageheight=$pdf_export_imgheight; // height variable
+			$imageheight=$imageheightvar; // height variable
 			$whratio=$imagesize[0]/$imagesize[1];
 			$imagewidth=$imageheight*$whratio;}
 			if ($whratio>=1 || $imagewidth>$width+1){
@@ -229,15 +232,19 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->ImageSVG($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,'','','',0,true);
 			} else {
 			$pdf->Image($logourl,$mylogoleft,$mylogotop,$mylogowidth,$mylogoheight,$logoext);
-			}}
+			}
 			$logofinalY = $pdf->getImageRBY()-.23;
+			} else {
+			$logofinalY = 0;
+			}
 			if ($ttfheaderfontvar) {	
 			$ttf_header_font = $pdf->addTTFfont('../../../'.$ttfheaderfontvar, 'TrueTypeUnicode', '', 32);
 			$pdf->SetFont($ttf_header_font, '', 15);
 			} else {
 			$pdf->SetFont('helvetica', 'B', 15,'',false);
 			}	
-			$ypos=$pdf->GetY();									
+			$ypos=$pdf->GetY();	
+			if ($excludetitlevar==0) {								
 			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
 			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$logofinalY, true, 0,false,false);		
 			// store current object
@@ -246,13 +253,22 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$lines = $pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$logofinalY, true, 0,false,false);		
 			// restore previous object
 			$pdf = $pdf->rollbackTransaction();
+			} else {
+			$lines = 0;
+			}
 			if ($ttflistfontvar) {
 			$ttf_list_font = $pdf->addTTFfont('../../../'.$ttflistfontvar,'','','','',3,1,false,false);
 			$pdf->SetFont($ttf_list_font, '', 10);
 			}  else {
 			$pdf->SetFont('helvetica', '', 10,'',false);
 			}
+			if ($lines>0) {
 			$titleheight = (($lines*0.20833333333334));
+			$titlelineratio = ($titleheight/$lines);
+			} else {
+			$titleheight = -.27;
+			$titlelineratio = .2;
+			}
 			$ypos=$logofinalY+.5+$titleheight+.5;$pdf->SetY($ypos);
 			$pdf->Image($imgpath,.5,$ypos,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
 			// set color for background
@@ -277,13 +293,13 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 				if ($onetimenotes) {
 				$pdf->SetLineStyle($style1);
 				$ypos=$pdf->GetY();									
-				$pdf->SetY($ypos+($titleheight/$lines)+.6);
+				$pdf->SetY($ypos+($titlelineratio)+.6);
 				$pdf->MultiRow($lang["onetimenotes"],str_replace("\\r\\n","\n",$onetimenotes));
 				$ypos=$pdf->GetY();									
 				$pdf->SetY($ypos);
 				$pdf->Line(.5,$ypos,$pdf->getPageWidth()-.5,$ypos);
 				} else {
-				$pdf->SetY($ypos+($titleheight/$lines)+.6);
+				$pdf->SetY($ypos+($titlelineratio)+.6);
 				}
 				foreach ($includearr as $include) {
 					$fieldsf = get_field($include);

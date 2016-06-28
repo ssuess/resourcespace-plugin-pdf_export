@@ -8,6 +8,7 @@ $pdf_export_font="helvetica";
 $pdf_export_admin_edit_access=array();
 $pdf_export_logo_url ="";
 $pdf_export_logo_deets=".5,.3,0,.5";
+$pdf_export_exclude_title=false;
 $pdf_export_fields_include=array();
 $pdf_export_fields_include_hidden ="";
 $pdf_export_ttf_header_font_path="";

@@ -1,5 +1,5 @@
 <?php
-error_log(getcwd() . "\n");
+//error_log(getcwd() . "\n");
 // Do the include and authorization checking ritual -- don't change this section.
 include '../../../include/db.php';
 include_once '../../../include/general.php';
@@ -13,6 +13,6 @@ $myconfig=$_POST['mydata'];
 $filename =$_POST['configname'];
 
 
-if (!file_exists("../../../filestore/pdf_export/jsonconfigs")){ mkdir("../../../filestore/pdf_export/jsonconfigs",0777);}
+if (!file_exists("../../../filestore/pdf_export/jsonconfigs")){ mkdir("../../../filestore/pdf_export/jsonconfigs",0755);}
 
 file_put_contents("../../../filestore/pdf_export/jsonconfigs/".$filename .".json",$myconfig);

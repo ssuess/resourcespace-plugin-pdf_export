@@ -62,6 +62,8 @@ if (jQuery('#pdfconfigwrapper').length) {
 
     jQuery( "#jsonit" ).click(function( ) {
         var prejson = jQuery('#pdfconfigwrapper').find('input[name!="pdf_export_fields_include[]"][name!="pdf_export_rt_exclude[]"]').serializeArray();
+        var titex = jQuery('#pdf_export_exclude_title').val();
+        prejson.push({name:"pdf_export_exclude_title", value: titex});
         var confignamevalue = jQuery('#configname').val();
     	var dataString = 'mydata=' + JSON.stringify(prejson) + '&configname='+ confignamevalue;
 

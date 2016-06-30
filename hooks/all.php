@@ -25,6 +25,7 @@ function HookPdf_exportAllAdditionalheaderjs(){
 <script type="text/javascript" src="<?php echo $baseurl_short?>plugins/pdf_export/js/chosen.order.jquery.min.js?css_reload_key=<?php echo $css_reload_key?>"></script>
 
 
+
 <script  type="text/javascript">
     
 jQuery(document).ready(function () {

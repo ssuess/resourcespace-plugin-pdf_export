@@ -25,3 +25,9 @@ $lang["resource_types_to_exclude"]="Resource Types to exclude<br />(tick to excl
 $lang["pdf_exportdebug"]="Debug:";
 $lang["onetimenotes"]="PDF notes";
 $lang["onetimenotesdesc"]="Enter notes that will show above other fields (only on this export, not saved)";
+$lang["pdf_export_barcode"] = "Generate Barcode?";
+$lang["pdf_export_barcode_field"] = "Replace this field (ID) with barcode.<br />Barcode will be generated using string from this field.<br/><br/>";
+$lang["pdf_export_barcode_type"] = "Barcode type";
+$lang["pdf_export_barcode_type_choices"]=array('EAN8','EAN13','C128');
+
+

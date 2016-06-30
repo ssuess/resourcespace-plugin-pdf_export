@@ -16,3 +16,6 @@ $pdf_export_ttf_list_font_path="";
 $pdf_export_imagesizeid="";
 $pdf_export_imgheight="6";
 $pdf_export_whereabouts_integration=false;
+$pdf_export_barcode=false;
+$pdf_export_barcode_field="80";
+$pdf_export_barcode_type="EAN13";

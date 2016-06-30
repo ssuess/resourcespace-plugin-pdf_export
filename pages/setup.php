@@ -41,6 +41,10 @@ $page_def[] = config_add_text_input('pdf_export_fields_include_hidden', $lang["p
 if (isset($whereabouts_rt_exclude)) {
 $page_def[] = config_add_boolean_select('pdf_export_whereabouts_integration', $lang['pdf_export_whereabouts_integration']);
 }
+$page_def[] = config_add_boolean_select('pdf_export_barcode', $lang['pdf_export_barcode']);
+$page_def[] = config_add_single_select('pdf_export_barcode_type', $lang['pdf_export_barcode_type'],$lang['pdf_export_barcode_type_choices'],false);
+$page_def[] = config_add_text_input('pdf_export_barcode_field', $lang["pdf_export_barcode_field"]);
+
 // Do the page generation ritual -- don't change this section.
 $upload_status = config_gen_setup_post($page_def, $plugin_name);
 include '../../../include/header.php';
@@ -61,7 +65,27 @@ do_alert($previousversion);
 }
 
 
-?><div id="pdfconfigwrapper"><?php
+?><script  type="text/javascript">
+jQuery(document).ready(function () {
+    toggleFields(); //call this first so we start out with the correct visibility depending on the selected form values
+    //this will call our toggleFields function every time the selection value of our underAge field changes
+    jQuery("#pdf_export_barcode").change(function () {
+        toggleFields();
+    });
+
+});
+//this toggles the visibility of our parent permission fields depending on the current selected value of the underAge field
+function toggleFields() {
+    if (jQuery('#pdf_export_barcode').val()==1) {
+            jQuery('#pdf_export_barcode_type').parent().show();
+            jQuery('#pdf_export_barcode_field').parent().show();
+               } else {
+            jQuery('#pdf_export_barcode_type').parent().hide();
+            jQuery('#pdf_export_barcode_field').parent().hide();
+            }
+            
+}    
+</script><div id="pdfconfigwrapper"><?php
 config_gen_setup_html($page_def, $plugin_name, $upload_status, $plugin_page_heading);
 ?><button type="button" id="jsonit">Save this config as:</button> <input id="configname" name="configname"></div><?php
 include '../../../include/footer.php';

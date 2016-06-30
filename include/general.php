@@ -36,7 +36,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $pdf_export_exclude_title,$pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $pdf_export_barcode_field,$pdf_export_barcode_type,$pdf_export_barcode,$pdf_export_exclude_title,$pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once($storagedir.'/../include/search_functions.php');
@@ -282,8 +282,25 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->setCellPaddings(0.01, 0.06, 0.01, 0.1);
 			$style= array('width' => 0.01, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(192,192,192));
+			$stylenoline= array('width' => 0, 'cap' => 'butt', 'join' => 'round' ,'dash' => '0', 'color' => array(255,255,255));
 			$style1 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '0', 'color' => array(0, 0, 0));
 			$style2 = array('width' => 0.02, 'cap' => 'butt', 'join' => 'round', 'dash' => '3', 'color' => array(255, 0, 0));
+			$barcodestyle = array(
+			'position' => '',
+    'align' => 'L',
+    'stretch' => false,
+    'fitwidth' => true,
+    'cellfitalign' => '',
+    'border' => false,
+    'hpadding' => 'auto',
+    'vpadding' => 'auto',
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, //array(255,255,255),
+    'text' => true,
+    'font' => 'helvetica',
+    'fontsize' => 8,
+    'stretchtext' => 4
+);
 			if ($lines>0) {
 			$ypos=$imageheight+($titleheight)+($logofinalY)+.5;$pdf->SetY($ypos);
 			} else {
@@ -324,6 +341,13 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 					//if($notepages>1){$pdf->setPage($currentpdfpage+($notepages-1));}
 					if (($whereabouts)&&($include =='w')) {
 					$pdf->MultiRow($whereabouts[0]['title'],ltrim(trim($whereabouts[0]['value']),','));
+					} elseif (($pdf_export_barcode==true) && ($pdf_export_barcode_field == $include) && (get_data_by_field($ref, $include))) {
+					$pdf->MultiRow(i18n_get_translated($fieldsf["title"]),'');
+					$pdf->SetLineStyle($stylenoline);
+					$pdf->MultiRow('',$pdf->write1DBarcode(trim(get_data_by_field($ref, $include)), $pdf_export_barcode_type, '1.8', $ypos,2,1, 0.4,$barcodestyle, 'N'));
+					$pdf->SetLineStyle($style);
+					$pdf->SetY($ypos+1);
+					//$pdf->write1DBarcode('1234567', $pdf_export_barcode_type, '', '',2,1, 0.4,$barcodestyle, '');
 					} else {
 					if (get_data_by_field ($ref, $include) && get_data_by_field ($ref, $include)!=',') {
 					$pdf->MultiRow(i18n_get_translated($fieldsf["title"]),ltrim(trim(i18n_get_translated(get_data_by_field ($ref, $include))),','));

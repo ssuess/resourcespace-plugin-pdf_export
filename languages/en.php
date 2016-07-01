@@ -28,6 +28,6 @@ $lang["onetimenotesdesc"]="Enter notes that will show above other fields (only o
 $lang["pdf_export_barcode"] = "Generate Barcode?";
 $lang["pdf_export_barcode_field"] = "Replace this field (ID) with barcode.<br />Barcode will be generated using string from this field.<br/><br/>";
 $lang["pdf_export_barcode_type"] = "Barcode type";
-$lang["pdf_export_barcode_type_choices"]=array('EAN8','EAN13','C128');
+$lang["pdf_export_barcode_type_choices"]=array('S25','I25','EAN8','EAN13','UPCA','CODE11','C39','C93','C128','CODABAR','MSI');
 
 

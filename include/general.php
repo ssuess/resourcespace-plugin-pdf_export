@@ -119,14 +119,19 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$configarray="";
 	}
 	if ($configarray!="") {
-	$ttfheaderfontvar = $configarray[0]['value'];
-	$ttflistfontvar = $configarray[1]['value'];
-	$logourlvar = $configarray[2]['value'];
-	$logodeetsvar=$configarray[3]['value'];
-	$imagesizeidvar = $configarray[4]['value'];
-	$imageheightvar = $configarray[5]['value'];
-	$exportfieldslistvar = $configarray[6]['value'];
-	$excludetitlevar = $configarray[9]['value'];
+	$configarray = array_combine(array_column($configarray, 'name'), array_column($configarray, 'value'));
+
+	$ttfheaderfontvar = $configarray['pdf_export_ttf_header_font_path'];
+	$ttflistfontvar = $configarray['pdf_export_ttf_list_font_path'];
+	$logourlvar = $configarray['pdf_export_logo_url'];
+	$logodeetsvar=$configarray['pdf_export_logo_deets'];
+	$imagesizeidvar = $configarray['pdf_export_imagesizeid'];
+	$imageheightvar = $configarray['pdf_export_imgheight'];
+	$exportfieldslistvar = $configarray['pdf_export_fields_include_hidden'];
+	$excludetitlevar = $configarray['pdf_export_exclude_title'];
+	$exportbarcodecvar = $configarray['pdf_export_barcode'];
+	$barcodefieldvar = $configarray['pdf_export_barcode_field'];
+	$barcodetypecvar = $configarray['pdf_export_barcode_type'];
 	} else {
 	$ttfheaderfontvar = $pdf_export_ttf_header_font_path;
 	$ttflistfontvar = $pdf_export_ttf_list_font_path;
@@ -136,6 +141,9 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$imagesizeidvar = $pdf_export_imagesizeid;
 	$exportfieldslistvar = $pdf_export_fields_include_hidden;
 	$excludetitlevar = $pdf_export_exclude_title;
+	$exportbarcodecvar = $pdf_export_barcode;
+	$barcodefieldvar = $pdf_export_barcode_field;
+	$barcodetypecvar = $pdf_export_barcode_type;	
 	}
 	
 	// set document information
@@ -341,10 +349,10 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 					//if($notepages>1){$pdf->setPage($currentpdfpage+($notepages-1));}
 					if (($whereabouts)&&($include =='w')) {
 					$pdf->MultiRow($whereabouts[0]['title'],ltrim(trim($whereabouts[0]['value']),','));
-					} elseif (($pdf_export_barcode==true) && ($pdf_export_barcode_field == $include) && (get_data_by_field($ref, $include))) {
+					} elseif (($exportbarcodecvar==true) && ($barcodefieldvar == $include) && (get_data_by_field($ref, $include))) {
 					$pdf->MultiRow(i18n_get_translated($fieldsf["title"]),'');
 					$pdf->SetLineStyle($stylenoline);
-					$pdf->MultiRow('',$pdf->write1DBarcode(trim(get_data_by_field($ref, $include)), $pdf_export_barcode_type, '1.8', $ypos,2,1, 0.4,$barcodestyle, 'N'));
+					$pdf->MultiRow('',$pdf->write1DBarcode(trim(get_data_by_field($ref, $include)), $barcodetypecvar, '1.8', $ypos,2,1, 0.4,$barcodestyle, 'N'));
 					$pdf->SetLineStyle($style);
 					$pdf->SetY($ypos+1);
 					//$pdf->write1DBarcode('1234567', $pdf_export_barcode_type, '', '',2,1, 0.4,$barcodestyle, '');

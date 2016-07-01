@@ -229,15 +229,13 @@ foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
 <input name="save" type="submit" value="&nbsp;&nbsp;<?php echo $lang["create"]?>&nbsp;&nbsp;" />
 </div>
 </form><?php 
-//$thisrefarray = get_resource_field_data ($ref,false);
-//$fieldsf = get_field('73');
-//echo $fieldsf["title"];
-//echo get_data_by_field ($ref, '73');
-//$includearr=explode(",",$pdf_export_fields_include);
+//$selectedconfig="test.json";
+//$configfile = file_get_contents($_SERVER["DOCUMENT_ROOT"].'/filestore/pdf_export/jsonconfigs/'. $selectedconfig);
+//$configarray = json_decode($configfile, true);
+//$configarray = array_combine(array_column($configarray, 'name'), array_column($configarray, 'value'));
 
-//echo $fdata["value"];
 //echo "<pre>";
-//print_r($includearr);
+//print_r($configarray);
 //echo "</pre>";
 
 ?>

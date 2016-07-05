@@ -2,6 +2,7 @@ name    : pdf_export
 author  : Stephen Suess
 version : 1.8
 desc    : Enable export of detail view info to PDF
+info_url: https://github.com/ssuess/resourcespace-plugin-pdf_export
 config_url: /plugins/pdf_export/pages/setup.php
 default_priority: 999
 category: Export

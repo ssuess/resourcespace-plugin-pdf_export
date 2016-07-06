@@ -172,6 +172,7 @@ function loadIt() {
 <?php if ($pdf_export){?>
 <div id="heading" class="BasicsBox" style="float:left;margin-bottom:0;" >
 <p id="introtext"><?php echo $lang["pdf_exportpdfintrotext"]?></p>
+<?php if (checkperm('pdf') || checkperm('a')) { ?><p id="configpagelink"><?php echo $lang["pdf_exportpdfconfiglink"];?></p><?php }?>
 <p class="pickconfig"><?php echo $lang["pdf_export_chooseconfig"]?> <?php $file_matcher = '../../../filestore/pdf_export/jsonconfigs/*.{json}';
 if (glob($file_matcher, GLOB_BRACE)){
 $myselect ='';

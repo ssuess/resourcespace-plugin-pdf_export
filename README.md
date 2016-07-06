@@ -24,6 +24,7 @@ Download the whole diretory and rename to "pdf_export". Then you can install it 
 
 
 ## Changelog
+* `v 1.9` - Fixed crashing bug in collection div, added special perm check (pdf) for config rights. Fix for tmp folders not being removed.
 * `v 1.8` - Output barcode from specified field
 * `v 1.7` - New config exclude title, fix if no logo specified, allow full height image (to margin)
 * `v 1.6.1` - Fix broken collections output,fix SVG cutoff problem in header,fix header zero height problem, header space tweak

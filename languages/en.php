@@ -7,7 +7,8 @@
 $lang['pdf_exports']="PDF";
 $lang['pdfexportwithnotes']="PDF Export";
 $lang["pdf_exportpdfconfig"]="PDF Export Configuration";
-$lang["pdf_exportpdfintrotext"]="Select the page size for your PDF.<br /><br />Configure other options <a href='/plugins/pdf_export/pages/setup.php'>here</a>.";
+$lang["pdf_exportpdfintrotext"]="Select the page size for your PDF.";
+$lang["pdf_exportpdfconfiglink"] ="Configure other options <a href='/plugins/pdf_export/pages/setup.php'>here</a>.";
 $lang["pdf_export_chooseconfig"]="Select a config to use: ";
 $lang["pdf_export_logo_url"]="PDF header image (URL)<br />Supports jpg, png, and svg<br /><br />";
 $lang["pdf_export_logo_deets"]="Header image: Left, Top, Width and Height in inches (numeric and comma separated, use 0 for auto calc of width/height)<br /><br />";

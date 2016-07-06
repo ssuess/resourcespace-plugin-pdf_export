@@ -8,7 +8,12 @@ function clear_pdf_export_temp($ref,$uniqid){
 	
 	if (file_exists($jpg_path)){unlink($jpg_path);}
 	if (file_exists($pdf_path)){unlink($pdf_path);}
-	if ($uniqfolder!="" && file_exists($tmpfolder)){rmdir($tmpfolder);}
+	if ($uniqfolder!="" && file_exists($tmpfolder)){
+	//error_log($tmpfolder);
+	rmdir($tmpfolder);
+	} else {
+	error_log('no temp folder found alas');
+	}
 }
 
 
@@ -421,7 +426,12 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 		if (file_exists($pdfstoragepath)){unlink($pdfstoragepath);}
 		if (file_exists($jpgstoragepath)){unlink($jpgstoragepath);}
 		$pathinfo=pathinfo($jpgstoragepath);
-		if (file_exists($pathinfo['dirname'])){rmdir($pathinfo['dirname']);}
+		if (file_exists($pathinfo['dirname'])){
+		//error_log('pathname after cleanup: ' .$pathinfo['dirname']);
+		rmdir($pathinfo['dirname']);
+		} else {
+		error_log('no pathinfo after cleanup found.');
+		}
 		$pdf->Output($filename.".pdf",'D');
 		}
 	else {

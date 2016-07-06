@@ -44,11 +44,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	global $pdf_export_barcode_field,$pdf_export_barcode_type,$pdf_export_barcode,$pdf_export_exclude_title,$pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
-	include_once($storagedir.'/../include/search_functions.php');
-	include_once($storagedir.'/../include/resource_functions.php');
-	include_once($storagedir.'/../include/collections_functions.php');
-	include_once($storagedir.'/../include/image_processing.php');
-	include_once($storagedir.'/../lib/tcpdf/tcpdf.php');
+	include_once(dirname(__FILE__) . '/../../../include/search_functions.php');
+	include_once(dirname(__FILE__) . '/../../../include/resource_functions.php');
+	include_once(dirname(__FILE__) . '/../../../include/collections_functions.php');
+	include_once(dirname(__FILE__) . '/../../../include/image_processing.php');
+	include_once(dirname(__FILE__) . '/../../../lib/tcpdf/tcpdf.php');
 
 	$pdfstoragepath=get_pdf_export_file_path($ref,true,"pdf");
 	$jpgstoragepath=get_pdf_export_file_path($ref,true,"jpg");
@@ -229,11 +229,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$whratio=$imagesize[0]/$imagesize[1];
 			$hwratio=$imagesize[1]/$imagesize[0];
 	
-			if ($whratio<1){
+			if ($whratio<=1){
 			$imageheight=$imageheightvar; // height variable
 			$whratio=$imagesize[0]/$imagesize[1];
 			$imagewidth=$imageheight*$whratio;}
-			if ($whratio>=1 || $imagewidth>$width+1){
+			if ($whratio>1 || $imagewidth>$width+1){
 			$imagewidth=$width-1; // horizontal images are scaled to width - 1 in
 			$hwratio=$imagesize[1]/$imagesize[0];
 			$imageheight=$imagewidth*$hwratio;}

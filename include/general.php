@@ -234,7 +234,12 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$whratio=$imagesize[0]/$imagesize[1];
 			$imagewidth=$imageheight*$whratio;}
 			if ($whratio>1 || $imagewidth>$width+1){
+			$picwidth = $imageheightvar/$hwratio;
+			if ($picwidth>$width) {
 			$imagewidth=$width-1; // horizontal images are scaled to width - 1 in
+			} else {
+			$imagewidth = $picwidth;
+			}
 			$hwratio=$imagesize[1]/$imagesize[0];
 			$imageheight=$imagewidth*$hwratio;}
 			$logourl = $logourlvar;

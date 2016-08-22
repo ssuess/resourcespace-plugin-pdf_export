@@ -123,6 +123,9 @@ location.reload();
 					if (selected){selecthtml=' selected="selected" ';}
 					$('#previewpage').append('<option value='+x+' '+selecthtml+'>'+x+'/'+(pagecount-1)+'</option>');
 				}
+				// fix for shitty chosen implementation
+				$("#previewpage").trigger("chosen:updated");
+
 			}
 			else {
 				$('#previewPageOptions').hide();
@@ -219,7 +222,7 @@ foreach( glob($file_matcher, GLOB_BRACE) as $myfile ) {
 
 <div name="previewPageOptions" id="previewPageOptions" class="Question" style="display:none">
 <label><?php echo $lang['previewpage']?></label>
-<select class="shrtwidth" name="previewpage" id="previewpage" onChange="jQuery().annotate('preview');	">
+<select class="shrtwidth" name="previewpage" id="previewpage" onChange="jQuery().annotate('preview');">
 </select>
 </div>
 <?php if ($pdf_export_debug){?><div name="error" id="error"></div><?php } ?>

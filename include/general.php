@@ -41,7 +41,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	# This leaves the pdfs and jpg previews in filestore/annotate so that they can be grabbed later.
 	# $cleanup will result in a slightly different path that is not cleaned up afterwards.
 	
-	global $pdf_export_barcode_field,$pdf_export_barcode_type,$pdf_export_barcode,$pdf_export_exclude_title,$pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
+	global $pdf_export_title_array,$pdf_export_includetype_title,$pdf_export_imagejustify,$pdf_export_barcode_field,$pdf_export_barcode_type,$pdf_export_barcode,$pdf_export_exclude_title,$pdf_export_logo_deets,$pdf_export_imgheight,$onetimenotes,$pdf_export_whereabouts_integration,$pdf_export_imagesizeid,$pdf_export_ttf_list_font_path,$pdf_export_ttf_header_font_path,$pdf_export_fields_include_hidden,$pdf_export_logo_url,$contact_sheet_preview_size,$pdf_output_only_annotated,$lang,$userfullname,$view_title_field,$baseurl,$imagemagick_path,$imagemagick_colorspace,$ghostscript_path,$previewpage,$storagedir,$storageurl,$pdf_export_font,$access,$k;
 	$date= date("m-d-Y h:i a");
 	
 	include_once(dirname(__FILE__) . '/../../../include/search_functions.php');
@@ -130,8 +130,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$ttflistfontvar = $configarray['pdf_export_ttf_list_font_path'];
 	$logourlvar = $configarray['pdf_export_logo_url'];
 	$logodeetsvar=$configarray['pdf_export_logo_deets'];
+	$titleincludetypevar=$configarray['pdf_export_includetype_title'];
+	$titlearrayvar=$configarray['pdf_export_title_array'];
 	$imagesizeidvar = $configarray['pdf_export_imagesizeid'];
 	$imageheightvar = $configarray['pdf_export_imgheight'];
+	$imagejustifyvar = $configarray['pdf_export_imagejustify'];
 	$exportfieldslistvar = $configarray['pdf_export_fields_include_hidden'];
 	$excludetitlevar = $configarray['pdf_export_exclude_title'];
 	$exportbarcodecvar = $configarray['pdf_export_barcode'];
@@ -142,8 +145,11 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$ttflistfontvar = $pdf_export_ttf_list_font_path;
 	$logourlvar = $pdf_export_logo_url;
 	$logodeetsvar=$pdf_export_logo_deets;
+	$titleincludetypevar=$pdf_export_includetype_title;
+	$titlearrayvar=$pdf_export_title_array;
 	$imageheightvar=$pdf_export_imgheight;
 	$imagesizeidvar = $pdf_export_imagesizeid;
+	$imagejustifyvar = $pdf_export_imagejustify;
 	$exportfieldslistvar = $pdf_export_fields_include_hidden;
 	$excludetitlevar = $pdf_export_exclude_title;
 	$exportbarcodecvar = $pdf_export_barcode;
@@ -191,7 +197,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 	$mylogoheight=0;
 	}
 	$includearr=explode(",",$exportfieldslistvar);
-	
+	$titlearrayvararr=explode(",",$titlearrayvar);
 	$page=1;
 	$totalpages=1;
 	$m=1;
@@ -268,9 +274,18 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$pdf->SetFont('helvetica', 'B', 15,'',false);
 			}	
 			$ypos=$pdf->GetY();	
-			if ($excludetitlevar==0) {								
-			$righttitle=str_replace("\\r\\n","\n",strtoupper(i18n_get_translated($resourcedata['field'.$view_title_field])));
-			$pdf->MultiCell(0,0, $righttitle, 0, 'L', 0, 1,.45,$ypos+$logofinalY, true, 0,false,false);		
+			if ($excludetitlevar==0) {
+			if ($titleincludetypevar==0) {
+			$toplinecomposite='';
+			} else {
+			$toplinecomposite= i18n_get_translated(get_resource_type_name($resourcedata['resource_type'])).' - ';
+			}
+			foreach ($titlearrayvararr as $toplineitem) {
+			$toplinecomposite .= ltrim(i18n_get_translated(get_data_by_field($ref,$toplineitem)),',') . " - ";
+			}
+			$toplinestring = substr($toplinecomposite, 0, -3);							
+			$righttitle=str_replace("\\r\\n","\n",strtoupper($toplinestring));
+			$pdf->MultiCell(0,0, $righttitle, 0, $pdf_export_imagejustify, 0, 1,.45,$ypos+$logofinalY, true, 0,false,false);		
 			// store current object
 			$pdf->startTransaction();
 			// get the number of lines for multicell
@@ -295,7 +310,7 @@ function create_pdf_export_pdf($ref,$is_collection=false,$size="letter",$cleanup
 			$titlelineratio = .2;
 			$ypos=$logofinalY+$titleheight+.5;$pdf->SetY($ypos);
 			}
-			$pdf->Image($imgpath,.5,$ypos,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref);	
+			$pdf->Image($imgpath,.5,$ypos,$imagewidth,$imageheight,"jpg",$baseurl. '/?r=' . $ref,'','','',$pdf_export_imagejustify);	
 			// set color for background
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->setCellPaddings(0.01, 0.06, 0.01, 0.1);

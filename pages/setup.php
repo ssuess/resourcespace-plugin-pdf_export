@@ -23,8 +23,11 @@ $page_def[] = config_add_text_input('pdf_export_ttf_list_font_path', $lang["pdf_
 $page_def[] = config_add_text_input('pdf_export_logo_url', $lang["pdf_export_logo_url"]);
 $page_def[] = config_add_text_input('pdf_export_logo_deets', $lang["pdf_export_logo_deets"]);
 $page_def[] = config_add_boolean_select('pdf_export_exclude_title', $lang['pdf_export_exclude_title']);
+$page_def[] = config_add_boolean_select('pdf_export_includetype_title', $lang['pdf_export_includetype_title']);
+$page_def[] = config_add_text_input('pdf_export_title_array', $lang["pdf_export_title_array"]);
 $page_def[] = config_add_text_input('pdf_export_imagesizeid', $lang["pdf_export_imagesizeid"]);
 $page_def[] = config_add_text_input('pdf_export_imgheight', $lang["pdf_export_imgheight"]);
+$page_def[] = config_add_single_select('pdf_export_imagejustify', $lang["pdf_export_imagejustify"],$lang["pdf_export_imagejustify_choices"],false);
 
 $pdf_export_full_fields_options=array();
 $allfields = sql_query('SELECT ref, title FROM resource_type_field;');
@@ -41,10 +44,11 @@ $page_def[] = config_add_text_input('pdf_export_fields_include_hidden', $lang["p
 if (isset($whereabouts_rt_exclude)) {
 $page_def[] = config_add_boolean_select('pdf_export_whereabouts_integration', $lang['pdf_export_whereabouts_integration']);
 }
+if (isset($barcode_display_fields)) {
 $page_def[] = config_add_boolean_select('pdf_export_barcode', $lang['pdf_export_barcode']);
 $page_def[] = config_add_single_select('pdf_export_barcode_type', $lang['pdf_export_barcode_type'],$lang['pdf_export_barcode_type_choices'],false);
 $page_def[] = config_add_text_input('pdf_export_barcode_field', $lang["pdf_export_barcode_field"]);
-
+}
 // Do the page generation ritual -- don't change this section.
 $upload_status = config_gen_setup_post($page_def, $plugin_name);
 include '../../../include/header.php';
@@ -113,6 +117,10 @@ if (jQuery('#pdfconfigwrapper').length) {
         prejson.push({name:"pdf_export_exclude_title", value: titex});
         var bctrue = jQuery('#pdf_export_barcode').val();
         prejson.push({name:"pdf_export_barcode", value: bctrue});
+		var titincludetype = jQuery('#pdf_export_includetype_title').val();
+        prejson.push({name:"pdf_export_includetype_title", value: titincludetype});
+		var imgposhoriz = jQuery('#pdf_export_imagejustify').val();
+        prejson.push({name:"pdf_export_imagejustify", value: imgposhoriz});
         var bctype = jQuery('#pdf_export_barcode_type').val();
         prejson.push({name:"pdf_export_barcode_type", value: bctype});        
         var confignamevalue = jQuery('#configname').val();
@@ -146,6 +154,12 @@ jQuery(document).ready(function () {
         toggleFields();
     });
 
+ toggleFieldstitle(); //call this first so we start out with the correct visibility depending on the selected form values
+    //this will call our toggleFields function every time the selection value of our underAge field changes
+    jQuery("#pdf_export_exclude_title").change(function () {
+        toggleFieldstitle();
+    });
+
 });
 //this toggles the visibility of our parent permission fields depending on the current selected value of the underAge field
 function toggleFields() {
@@ -155,6 +169,17 @@ function toggleFields() {
                } else {
             jQuery('#pdf_export_barcode_type').parent().hide();
             jQuery('#pdf_export_barcode_field').parent().hide();
+            }
+            
+}    
+
+function toggleFieldstitle() {
+    if (jQuery('#pdf_export_exclude_title').val()==0) {
+            jQuery('#pdf_export_includetype_title').parent().show();
+            jQuery('#pdf_export_title_array').parent().show();
+               } else {
+            jQuery('#pdf_export_includetype_title').parent().hide();
+            jQuery('#pdf_export_title_array').parent().hide();
             }
             
 }    

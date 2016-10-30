@@ -163,7 +163,6 @@ function loadIt() {
 <?php } ?>
 
 <div class="BasicsBox" >
-
 <?php if (!$is_collection){?>
 <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo $ref?>&search=<?php echo urlencode($search)?>&offset=<?php echo $offset?>&order_by=<?php echo $order_by?>&sort=<?php echo $sort?>&archive=<?php echo $archive?>&pdf_export=true" onClick="return CentralSpaceLoad(this);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
 <?php } else {?>

@@ -60,7 +60,7 @@ var pdf_export_previewimage_prefix = "";
 
 (function($) {
 
-jQuery("a#deleteconfig").live('click', function(event) {
+jQuery("a#deleteconfig").on('click', function(event) {
  event.preventDefault();
         var confignamevalue = jQuery('#configselect').val();
     	var dataString = 'configname='+ confignamevalue;

@@ -21,12 +21,15 @@ if ($productversion == 'SVN'){
  foreach($out as $outline){
   $matches = array();
   if (preg_match('/^Revision: (\d+)/i', $outline, $matches)!=0){
-   $build = $matches[1];
+   $build = "r" . $matches[1];
   }
  } 
 }
+
+# ResourceSpace version
+$p_version = $productversion == 'SVN'?'Subversion ' . $build:$productversion; # Should not be translated as this information is sent to the bug tracker.
 ?>
-<li><a class="nowrap" href="<?php echo $baseurl_short?>plugins/pdf_export/pages/pdf_export_config.php?ref=<?php echo $ref?>&ext=<?php echo $resource["preview_extension"]?>&k=<?php echo $k?>&search=<?php echo urlencode($search)?>&offset=<?php echo $offset?>&order_by=<?php echo $order_by?>&sort=<?php echo $sort?>&archive=<?php echo $archive?>" onClick="return CentralSpaceLoad(this);"><?php if ($build>8187) { ?><i class='fa fa-file-pdf-o'></i><?php } else { ?>&gt;<?php } ?>&nbsp;<?php echo $lang["pdfexportwithnotes"]?></a></li>
+<li><a class="nowrap" href="<?php echo $baseurl_short?>plugins/pdf_export/pages/pdf_export_config.php?ref=<?php echo $ref?>&ext=<?php echo $resource["preview_extension"]?>&k=<?php echo $k?>&search=<?php echo urlencode($search)?>&offset=<?php echo $offset?>&order_by=<?php echo $order_by?>&sort=<?php echo $sort?>&archive=<?php echo $archive?>" onClick="return CentralSpaceLoad(this);"><?php if (version_compare($p_version, '7.9.8187') >= 0) { ?><i class='fa fa-file-pdf-o'></i><?php } else { ?>&gt;<?php } ?>&nbsp;<?php echo $lang["pdfexportwithnotes"]?></a></li>
 <?php }	
 return true;	
 }

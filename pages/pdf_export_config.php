@@ -163,7 +163,7 @@ function loadIt() {
 <?php } ?>
 
 <div class="BasicsBox" >
-<?php if (!$is_collection){?>
+<?php generateFormToken("annotateform"); if (!$is_collection){?>
 <p><a href="<?php echo $baseurl_short?>pages/view.php?ref=<?php echo $ref?>&search=<?php echo urlencode($search)?>&offset=<?php echo $offset?>&order_by=<?php echo $order_by?>&sort=<?php echo $sort?>&archive=<?php echo $archive?>&pdf_export=true" onClick="return CentralSpaceLoad(this);">&lt;&nbsp;<?php echo $lang["backtoresourceview"]?></a></p>
 <?php } else {?>
 <p><a href="<?php echo $baseurl_short?>pages/search.php?search=!collection<?php echo substr($ref,1)?>&offset=<?php echo $offset?>&order_by=<?php echo $order_by?>&sort=<?php echo $sort?>&archive=<?php echo $archive?>" onClick="return CentralSpaceLoad(this);">&lt;&nbsp;<?php echo $lang["backtoresults"]?></a></p>

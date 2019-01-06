@@ -1,13 +1,13 @@
 <?php function HookPdf_exportAllRender_actions_add_collection_option($top_actions,$options){
-	// global $lang,$pagename,$pdf_output,$pdf_output_only_annotated,$baseurl_short,$collection,$count_result;
-// 	$selectedcoll = '';
-// 	foreach ($options as $theoption){
-// 		if (isset($theoption['extra_tag_attributes'])){
-// 			if (preg_match("/\/pages\/collection_log\.php\?collection=(\\d+)/",$theoption['extra_tag_attributes'],$thiscoll)){
-// 				$selectedcoll = $thiscoll[1];
-// 			}
-// 		}
-// 	}
+	global $lang,$pagename,$pdf_output,$pdf_output_only_annotated,$baseurl_short,$collection,$count_result;
+	$selectedcoll = '';
+	foreach ($options as $theoption){
+		if (isset($theoption['extra_tag_attributes'])){
+			if (preg_match("/\/pages\/collection_log\.php\?collection=(\\d+)/",$theoption['extra_tag_attributes'],$thiscoll)){
+				$selectedcoll = $thiscoll[1];
+			}
+		}
+	}
 	$c=count($options);
 	$colreff = $collection;
 	if ($pdf_output || $count_result!=0){
